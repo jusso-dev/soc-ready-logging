@@ -1,5 +1,5 @@
 /*
- * Google Security Operations (Chronicle SIEM) — Starter YARA-L 2.0 Rules
+ * Google Security Operations (Chronicle SIEM): Starter YARA-L 2.0 Rules
  * Targets canonical `soc-ready-logging` v1.0.0 events mapped into UDM.
  */
 
@@ -29,7 +29,7 @@ rule custom_app_brute_force_then_success {
 rule custom_app_authz_idor_burst {
   meta:
     author = "jusso-dev/soc-ready-logging"
-    description = "Detects rapid HTTP 403 authorization failures across multiple target records (potential IDOR / BOLA probing, MITRE T1213)"
+    description = "Detects rapid HTTP 403 authorisation failures across multiple target records (potential IDOR / BOLA probing, MITRE T1213)"
     severity = "Medium"
     mitre_attack = "T1213"
     ism_controls = "ISM-0585, ISM-1228"

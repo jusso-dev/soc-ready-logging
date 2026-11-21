@@ -1,4 +1,4 @@
-# 12 — Normalising, Redacting & Proving Delivery with Bower
+# 12: Normalising, Redacting & Proving Delivery with Bower
 
 Writing clean structured security events inside your application is half the battle. In government and regulated Australian environments, teams still have to solve:
 
@@ -16,7 +16,7 @@ Rather than re-inventing all of that from scratch in every vendor project, pair 
 
 ## Why Pair `soc-ready-logging` with Bower?
 
-Inspired by the Australian bowerbird, **Bower** follows **Collect → Select → Arrange → Deliver → Prove**—deliberately selecting, redacting, and arranging high-value security signal instead of forwarding every log.
+Inspired by the Australian bowerbird, **Bower** follows **Collect → Select → Arrange → Deliver → Prove**, deliberately selecting, redacting, and arranging high-value security signal instead of forwarding every log.
 
 | Challenge in Government SOC Onboarding | How Bower Solves It |
 |---|---|
@@ -28,7 +28,7 @@ Inspired by the Australian bowerbird, **Bower** follows **Collect → Select →
 | **Multiple SIEM destinations** | Ships to **Microsoft Sentinel** (Azure Monitor Logs Ingestion API or AMA JSONL spool), **AWS S3** (`BOWER_OUTPUT=s3`), or **Splunk HEC / generic HTTP NDJSON** (`BOWER_OUTPUT=http`). |
 | **IRAP / ATO proof that logs actually arrived** | `bower evidence run` sends a canary through the real collector, queries Sentinel with KQL under a separate read-only identity, records latency/retention/region, maps results to **ACSC ISM & Essential Eight** controls, and signs the evidence bundle. |
 
-> **Honest status note**: Check Bower's [project status & production readiness gates](https://github.com/jusso-dev/Bower#project-status) before deploying to production—Bower publishes transparent, recorded pilot & qualification evidence for every release path.
+> **Honest status note**: Check Bower's [project status & production readiness gates](https://github.com/jusso-dev/Bower#project-status) before deploying to production. Bower publishes transparent, recorded pilot & qualification evidence for every release path.
 
 ---
 

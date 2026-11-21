@@ -62,7 +62,7 @@ BASE_GRAPH_ATTR = {
 
 # Keep icons crisp at 1.35" wide inside a 2.60" tall node box so
 # (2.60 - 1.35) / 2 = 0.625" of clean gap sits below every square icon for
-# 1-to-3 line labels—zero icon-to-text or arrow-to-text collisions.
+# 1-to-3 line labels, with zero icon-to-text or arrow-to-text collisions.
 BASE_NODE_ATTR = {
     "fontname": FONT,
     "fontsize": "10.5",
@@ -209,7 +209,7 @@ def build_signal_vs_noise() -> None:
             penwidth="1.8",
         ) >> dropped
         raw >> sec_edge("Keep transitions") >> candidates
-        candidates >> fed_edge("Sanitize & cap") >> hygiene
+        candidates >> fed_edge("Sanitise & cap") >> hygiene
         hygiene >> sec_edge("100% schema valid") >> siem
 
 
@@ -242,7 +242,7 @@ def build_vendor_lifecycle() -> None:
 
 def build_azure_diagram() -> None:
     with Diagram(
-        "Azure & Microsoft Sentinel — Two-Stream SOC Security Logging (Australia East / Southeast)",
+        "Azure & Microsoft Sentinel: Two-Stream SOC Security Logging (Australia East / Southeast)",
         filename=str(OUT_DIR / "cloud-azure-sentinel"),
         outformat="png",
         show=False,
@@ -287,7 +287,7 @@ def build_azure_diagram() -> None:
 
 def build_aws_diagram() -> None:
     with Diagram(
-        "AWS & Amazon Security Lake — Two-Stream SOC Security Logging (ap-southeast-2 / 4)",
+        "AWS & Amazon Security Lake: Two-Stream SOC Security Logging (ap-southeast-2 / 4)",
         filename=str(OUT_DIR / "cloud-aws-security-lake"),
         outformat="png",
         show=False,
@@ -338,7 +338,7 @@ def build_aws_diagram() -> None:
 
 def build_gcp_diagram() -> None:
     with Diagram(
-        "GCP & Google Security Operations (Chronicle) — Two-Stream Logging (australia-southeast1 / 2)",
+        "GCP & Google Security Operations (Chronicle): Two-Stream Logging (australia-southeast1 / 2)",
         filename=str(OUT_DIR / "cloud-gcp-secops"),
         outformat="png",
         show=False,
@@ -385,7 +385,7 @@ def build_gcp_diagram() -> None:
 def build_cross_cloud_federation() -> None:
     graph_attr = {**BASE_GRAPH_ATTR, "ranksep": "1.65", "nodesep": "1.05"}
     with Diagram(
-        "Cross-Cloud & Hybrid Log Federation (Zero Static Keys — Filter stream='security' Before Egress)",
+        "Cross-Cloud & Hybrid Log Federation (Zero Static Keys; Filter stream='security' Before Egress)",
         filename=str(OUT_DIR / "cross-cloud-log-federation"),
         outformat="png",
         show=False,
@@ -448,8 +448,8 @@ def build_bower_diagram() -> None:
         with Cluster("1. Collect (Multi-Cloud, Custom & Legacy)", graph_attr=cluster_style("#f8fafc", "#cbd5e1")):
             src_app = AppServices("Custom Apps\n(Bower SDK / NDJSON\n+ Docker Sidecar)")
             src_sql = SQLDatabases("Legacy SQL Server\nAudit Tables\n(ReadOnly EF Adapter)")
-            src_aws = SQS("AWS Security Signal\nGuardDuty / CloudTrail\n(IAM Role — No Keys)")
-            src_gcp = PubSub("GCP Security Signal\nSCC / Admin Audit\n(WIF — Key Files Refused)")
+            src_aws = SQS("AWS Security Signal\nGuardDuty / CloudTrail\n(IAM Role, No Keys)")
+            src_gcp = PubSub("GCP Security Signal\nSCC / Admin Audit\n(WIF, Key Files Refused)")
 
         with Cluster("2. Select & Arrange (Host-Side Before Egress)", graph_attr=cluster_style("#eff6ff", "#60a5fa", "#1e3a8a")):
             privacy = SecuritySettings("AU Privacy Engine\nTFN, Medicare, IHI,\nABN, CRN & Secrets")

@@ -1,4 +1,4 @@
-# 05 — PII Redaction, Secret Scrubbing & Log Safety
+# 05: PII Redaction, Secret Scrubbing & Log Safety
 
 Security logs must **never** become a secondary breach vector. In government environments governed by the **Privacy Act 1988 (Cth)**, the **Notifiable Data Breaches (NDB) scheme**, **PSPF**, and **OWASP ASVS V7/V16**, leaking secrets or regulated citizen data into a centrally retained SIEM can turn a routine audit into a reportable incident.
 
@@ -6,7 +6,7 @@ Security logs must **never** become a secondary breach vector. In government env
 
 ## 1. The Absolute Never-Log List
 
-Never emit any of the following—in `message`, `details`, `http.route`, `target.name`, or stack traces:
+Never emit any of the following in `message`, `details`, `http.route`, `target.name`, or stack traces:
 
 - **Credentials & secrets**: Cleartext passwords, password hashes, PINs, OTP codes, MFA recovery codes, private keys (`-----BEGIN ... PRIVATE KEY-----`), database connection strings.
 - **Session & bearer material**: Raw session IDs, cookies, `Authorization: Bearer ...` headers, JWTs (`eyJ...`), OAuth access/refresh tokens, SAML assertions, API keys, pre-signed S3/Blob URLs.
@@ -19,13 +19,13 @@ Never emit any of the following—in `message`, `details`, `http.route`, `target
 |---|---|
 | Raw session cookie / JWT | `actor.session_id_hash`: `"sha256:<first-32-hex-chars-of-salted-hash>"` |
 | API key secret | `details.key_id`: `"key_01J9..."` + `details.scopes` |
-| Full URL with query tokens (`/reset?token=abc`) | Parameterized `http.route`: `"/api/v1/auth/reset"` |
+| Full URL with query tokens (`/reset?token=abc`) | Parameterised `http.route`: `"/api/v1/auth/reset"` |
 | User's full form submission | `details.changed_fields`: `["email", "phone"]` |
 | Citizen TFN or Medicare number | Internal opaque record UUID (`target.id: "rec-992104"`) + `target.classification: "OFFICIAL:Sensitive"` |
 
 ---
 
-## 2. Defense-in-Depth Redaction
+## 2. Defence-in-Depth Redaction
 
 Do not rely on every developer remembering what to omit. Enforce redaction in **three layers**:
 
@@ -50,7 +50,7 @@ Attackers routinely inject `\r`, `\n`, `\t`, or ANSI terminal escape sequences (
 
 **Mandatory mitigations** (implemented in all reference loggers in `examples/`):
 
-1. **Always serialize with a real JSON encoder** — never concatenate strings to build JSON.
+1. **Always serialise with a real JSON encoder**; never concatenate strings to build JSON.
 2. **Strip or replace ASCII control characters** (`0x00–0x1F`, `0x7F`) and ANSI escape sequences in every string field before emission.
 3. **Enforce strict max lengths** on untrusted fields (`user_agent` <= 512 chars, `message` <= 512 chars, `details` <= 25 keys) to prevent log-flooding / memory exhaustion attacks.
 

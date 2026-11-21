@@ -16,7 +16,7 @@
 ## Optional High-Value Context
 - `category`: `"authentication"|"authorization"|"session"|"iam"|"privilege"|"data_access"|"system"|"configuration"|"input_validation"|"api"|"cryptography"|"tamper"`
 - `target`: `{ type?, id?, name?, classification? ("UNOFFICIAL"|"OFFICIAL"|"OFFICIAL:Sensitive"|"PROTECTED"|"PUBLIC"|"INTERNAL"|"CONFIDENTIAL"|"RESTRICTED") }`
-- `http`: `{ method?, route? (parameterized e.g. "/api/v1/cases/{id}"), status_code? }`
+- `http`: `{ method?, route? (parameterised e.g. "/api/v1/cases/{id}"), status_code? }`
 - `reason`: short snake_case reason code (`invalid_credentials`, `missing_role`, `mfa_user_denied`, `invalid_signature`)
 - `details`: bounded flat/shallow object (max 25 keys, never unredacted secrets/PII)
 

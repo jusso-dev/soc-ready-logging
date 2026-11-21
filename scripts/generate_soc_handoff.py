@@ -64,13 +64,13 @@ def generate_handoff_markdown(
                 f"{mitre} | {ism} | {meta['description']} |"
             )
         else:
-            rows.append(f"| `{ev}` | `custom` | `INFO` | `P2` | - | ISM-0585 | Custom event (consider aligning to catalog) |")
+            rows.append(f"| `{ev}` | `custom` | `INFO` | `P2` | - | ISM-0585 | Custom event (consider aligning to catalogue) |")
 
     event_table = "\n".join(rows) if rows else "| _(none specified)_ | - | - | - | - | - | - |"
 
-    return f"""# Day-1 SOC Handoff Pack — {app_name} (`{app_id}`)
+    return f"""# Day-1 SOC Handoff Pack: {app_name} (`{app_id}`)
 
-Generated with `soc-ready-logging` (`v1.0.0` canonical schema — OWASP + ACSC ISM aligned).
+Generated with `soc-ready-logging` (`v1.0.0` canonical schema, OWASP + ACSC ISM aligned).
 
 ---
 
@@ -85,12 +85,12 @@ Generated with `soc-ready-logging` (`v1.0.0` canonical schema — OWASP + ACSC I
 | **Log Transport** | {transport} |
 | **Identity Provider (IdP)** | {idp} |
 | **Stream Filter** | `stream == "security"` (operational/debug logs excluded from SIEM) |
-| **Timestamp Standard** | UTC ISO-8601 (`...Z`), NTP-synchronized (ACSC ISM-0988) |
+| **Timestamp Standard** | UTC ISO-8601 (`...Z`), NTP-synchronised (ACSC ISM-0988) |
 | **Heartbeat Expectation** | `sys_logging_heartbeat` every 15–60 min; alert if silent > 90 min |
 
 ---
 
-## 2. Implemented Security Event Catalog ({len(events)} events)
+## 2. Implemented Security Event Catalogue ({len(events)} events)
 
 | Event (`event`) | Category | Severity | Priority | MITRE ATT&CK | ACSC ISM | Description |
 |---|---|---|---|---|---|---|
@@ -101,7 +101,7 @@ Generated with `soc-ready-logging` (`v1.0.0` canonical schema — OWASP + ACSC I
 ## 3. Day-1 Starter SIEM Query ({siem})
 
 ```kql
-// Microsoft Sentinel KQL — High-priority security events for {app_id}
+// Microsoft Sentinel KQL: High-priority security events for {app_id}
 CustomAppSecurity_CL
 | where TimeGenerated > ago(24h)
 | where stream == "security" and tostring(app.id) == "{app_id}" and tostring(app.environment) == "prod"
@@ -118,7 +118,7 @@ CustomAppSecurity_CL
 - [ ] `python3 scripts/score_signal_noise.py <staging-capture.ndjson> --min-score 90` passes
 - [ ] Synthetic attack replay (`python3 scripts/generate_test_events.py --app-id {app_id} --environment uat`) ingested and alerted in {siem}
 - [ ] Known service accounts and scheduled automation documented with the SOC to prevent Day-1 false positives
-- [ ] Write-only SIEM ingestion confirmed (application runtime cannot modify or delete ingested logs — ACSC ISM-1815)
+- [ ] Write-only SIEM ingestion confirmed (application runtime cannot modify or delete ingested logs, per ACSC ISM-1815)
 """
 
 
@@ -147,7 +147,7 @@ def main(argv: List[str] | None = None) -> int:
         audit = audit_directory(args.from_repo)
         event_set.update(audit["detected_canonical_events"])
     if not event_set:
-        # Default to P1 baseline events from the catalog
+        # Default to P1 baseline events from the catalogue
         event_set.update(k for k, v in catalog_map.items() if v.get("siem_priority") == "P1")
         event_set.add("sys_logging_heartbeat")
 

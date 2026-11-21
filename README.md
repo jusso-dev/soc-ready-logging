@@ -1,26 +1,26 @@
 # soc-ready-logging
 
 [![CI](https://github.com/jusso-dev/soc-ready-logging/actions/workflows/ci.yml/badge.svg)](https://github.com/jusso-dev/soc-ready-logging/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+[![Licence: MIT](https://img.shields.io/badge/Licence-MIT-green.svg)](./LICENSE)
 [![Standards: OWASP + ACSC ISM](https://img.shields.io/badge/Aligned-OWASP%20%2B%20ACSC%20ISM-0ea5e9.svg)](./docs/04-owasp-and-acsc-mapping.md)
 [![Open-Source Normaliser: Bower](https://img.shields.io/badge/Recommended%20Normaliser-jusso--dev%2FBower-10b981.svg)](https://github.com/jusso-dev/Bower)
 
-**High-value, low-noise, security-centric logging for custom software vendors building for Government and Enterprise SOC teams — designed to pair directly with our open-source security log normaliser and Australian privacy gateway, [Bower](https://github.com/jusso-dev/Bower).**
+**High-value, low-noise, security-centric logging for custom software vendors building for Government and Enterprise SOC teams, designed to pair directly with our open-source security log normaliser and Australian privacy gateway, [Bower](https://github.com/jusso-dev/Bower).**
 
 > [!TIP]
 > **Don't build a log normaliser, PII redactor, tamper-evident queue, or Sentinel arrival prover from scratch.**
 > Use **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([Docs](https://jusso-dev.github.io/Bower/) · [Integration Guide](./docs/12-normalising-and-shipping-with-bower.md)) alongside this repo. Bower runs **Collect → Select → Arrange → Deliver → Prove** on-host: default-deny security policies, deterministic checksum-validated Australian PII/secret redaction (TFN, Medicare, IHI, ABN/ACN, CRN, keys/JWTs), a hash-chained SQLite WAL ledger, multi-cloud AWS/GCP/SQL Server normalisation, and `bower evidence run` signed Sentinel arrival bundles.
 
-Aligned to **OWASP** (Logging Cheat Sheet, Application Logging Vocabulary, ASVS v4.0.3 V7 & v5.0 V16, Top 10 A09) and **ACSC / ASD** (Information Security Manual System Monitoring, *Best Practices for Event Logging and Threat Detection*, and *Priority Logs for SIEM Ingestion*)—complete with **Azure, AWS, GCP & Cross-Cloud federation guides**, **Diagram-as-Code architecture diagrams with official cloud icons**, **zero-dependency CLI scripts**, **drop-in language wrappers**, **starter SIEM detections**, and **portable AI coding agent skills**.
+Aligned to **OWASP** (Logging Cheat Sheet, Application Logging Vocabulary, ASVS v4.0.3 V7 & v5.0 V16, Top 10 A09) and **ACSC / ASD** (Information Security Manual System Monitoring, *Best Practices for Event Logging and Threat Detection*, and *Priority Logs for SIEM Ingestion*), complete with **Azure, AWS, GCP & Cross-Cloud federation guides**, **Diagram-as-Code architecture diagrams with official cloud icons**, **zero-dependency CLI scripts**, **drop-in language wrappers**, **starter SIEM detections**, and **portable AI coding agent skills**.
 
 ## Part of the Microsoft security logging stack
 
-1. **[microsoft-security-logging-guide](https://github.com/jusso-dev/microsoft-security-logging-guide)** — What to log: practical, product-by-product guidance on getting high-value security logs from Microsoft products into Microsoft Sentinel and Microsoft Defender XDR.
-2. **[soc-ready-logging](https://github.com/jusso-dev/soc-ready-logging)** *(you are here)* — How to instrument custom applications: OWASP and ACSC ISM schemas, CLI validators, language wrappers, starter detections, and AI agent skills for high-value, low-noise security logging.
-3. **[Bower](https://github.com/jusso-dev/Bower)** — How to normalise, redact, and ship logs: self-hosted security telemetry normaliser and Australian privacy gateway with default-deny selection, host-side PII redaction, tamper-evident buffering, and signed Sentinel arrival proof.
+1. **[microsoft-security-logging-guide](https://github.com/jusso-dev/microsoft-security-logging-guide)**: What to log. Practical, product-by-product guidance on getting high-value security logs from Microsoft products into Microsoft Sentinel and Microsoft Defender XDR.
+2. **[soc-ready-logging](https://github.com/jusso-dev/soc-ready-logging)** *(you are here)*: How to instrument custom applications. OWASP and ACSC ISM schemas, CLI validators, language wrappers, starter detections, and AI agent skills for high-value, low-noise security logging.
+3. **[Bower](https://github.com/jusso-dev/Bower)**: How to normalise, redact, and ship logs. Self-hosted security telemetry normaliser and Australian privacy gateway with default-deny selection, host-side PII redaction, tamper-evident buffering, and signed Sentinel arrival proof.
 4. **Operate on the logs in Microsoft Defender XDR and Microsoft Sentinel:**
-   - **[blueboard](https://github.com/jusso-dev/blueboard)** — Shared board where AI agents and SOC analysts work incidents together across Microsoft Defender XDR and Microsoft Sentinel, with human-approved containment and eradication.
-   - **[crosswire](https://github.com/jusso-dev/crosswire)** — Open-source SOC kit for GitHub Copilot and Squad agents that hunt in Microsoft Defender XDR and Microsoft Sentinel, cross-compare threat intelligence, and propose gated responses for human approval.
+   - **[blueboard](https://github.com/jusso-dev/blueboard)**: Shared board where AI agents and SOC analysts work incidents together across Microsoft Defender XDR and Microsoft Sentinel, with human-approved containment and eradication.
+   - **[crosswire](https://github.com/jusso-dev/crosswire)**: Open-source SOC kit for GitHub Copilot and Squad agents that hunt in Microsoft Defender XDR and Microsoft Sentinel, cross-compare threat intelligence, and propose gated responses for human approval.
 
 ---
 
@@ -35,8 +35,8 @@ Need an open-source, self-hosted gateway that enforces **default-deny security s
 Pair this repository with **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([Docs](https://jusso-dev.github.io/Bower/) · [Integration Guide](./docs/12-normalising-and-shipping-with-bower.md)):
 
 - **Collect → Select → Arrange → Deliver → Prove**: Default-deny versioned policies reject noise before persistence; only approved semantic security events pass.
-- **Australian-first host-side Privacy & Secret Protection Engine**: Deterministic checksum validation for **TFN, Medicare, IHI, ABN/ACN, payment cards** plus **CRN**, JWTs, cloud keys, and PEM secrets *before data leaves the host*—quarantining on failure and emitting `sensitive_data_detected` to your SOC.
-- **Multi-cloud & legacy on one contract**: Normalises custom apps (Bower SDK + `AGENTS.md`), legacy SQL Server audit tables, Docker containers, Windows Event Logs, **AWS** (GuardDuty, Security Hub, high-value CloudTrail via SQS/Firehose—no stored cloud keys), and **GCP** (SCC & Admin Audit via Pub/Sub—WIF only, key files refused) into **Microsoft Sentinel** (Logs Ingestion API / AMA spool), **S3**, or **Splunk HEC / HTTP NDJSON**.
+- **Australian-first host-side Privacy & Secret Protection Engine**: Deterministic checksum validation for **TFN, Medicare, IHI, ABN/ACN, payment cards** plus **CRN**, JWTs, cloud keys, and PEM secrets *before data leaves the host*, quarantining on failure and emitting `sensitive_data_detected` to your SOC.
+- **Multi-cloud & legacy on one contract**: Normalises custom apps (Bower SDK + `AGENTS.md`), legacy SQL Server audit tables, Docker containers, Windows Event Logs, **AWS** (GuardDuty, Security Hub, high-value CloudTrail via SQS/Firehose with no stored cloud keys), and **GCP** (SCC & Admin Audit via Pub/Sub using WIF only, key files refused) into **Microsoft Sentinel** (Logs Ingestion API / AMA spool), **S3**, or **Splunk HEC / HTTP NDJSON**.
 - **Tamper-evident ledger & IRAP/ATO proof**: Hash-chained SQLite WAL queue ledger, DCR generator & drift checks, plus `bower evidence run` to verify a live canary inside Sentinel and sign an **ACSC ISM / Essential Eight** evidence bundle.
 
 ![Bower Privacy Gateway & Normalisation Pipeline](./diagrams/bower-privacy-gateway.png)
@@ -55,7 +55,7 @@ This toolkit gives vendors and government buyers **one clean contract** and **au
 
 ## 60-Second Quickstart
 
-### Option A — Ship & Normalise Through [Bower](https://github.com/jusso-dev/Bower) (Recommended for Gov & Sentinel)
+### Option A: Ship & Normalise Through [Bower](https://github.com/jusso-dev/Bower) (Recommended for Gov & Sentinel)
 
 Let **[Bower](https://github.com/jusso-dev/Bower)** handle default-deny noise rejection, host-side Australian PII redaction (TFN, Medicare, IHI, ABN/ACN, CRN), tamper-evident queuing, multi-cloud AWS/GCP/SQL Server normalisation, and signed Sentinel arrival proof (`bower evidence run`):
 
@@ -74,7 +74,7 @@ dotnet run --project src/Bower.Collector
 
 See [`docs/12-normalising-and-shipping-with-bower.md`](./docs/12-normalising-and-shipping-with-bower.md) and the [Bower Getting Started Guide](https://jusso-dev.github.io/Bower/getting-started/) for SDK, Azure Logs Ingestion API, S3, Splunk HEC, AWS `bower-cloud`, and GCP Pub/Sub setups.
 
-### Option B — Let Your AI Coding Agent Instrument Your App + Bower
+### Option B: Let Your AI Coding Agent Instrument Your App + Bower
 
 Install the 4 portable `SKILL.md` skills into **Claude Code, Codex, Cursor, Antigravity, GitHub Copilot, or OpenCode**:
 
@@ -94,9 +94,9 @@ Then ask your coding agent inside your application repo:
 
 *(Using a chat assistant without skill loading? Copy-paste from [`templates/vendor-agent-prompt-pack.md`](./templates/vendor-agent-prompt-pack.md).)*
 
-### Option C — Run the Zero-Dependency CLI Gates Directly
+### Option C: Run the Zero-Dependency CLI Gates Directly
 
-All scripts use **Python 3.9+ standard library only**—no `pip install`, works in restricted or air-gapped government build pipelines:
+All scripts use **Python 3.9+ standard library only** (no `pip install`), so they work in restricted or air-gapped government build pipelines:
 
 ```bash
 # 1. Validate a log capture against schema, OWASP taxonomy, secret/PII redaction, & CWE-117 safety
@@ -123,10 +123,10 @@ Vendor hosting and agency SOC SIEMs frequently span different clouds. Dedicated 
 
 | Cloud / Scenario | Implementation Guide | Architecture Diagram |
 |---|---|---|
-| **Microsoft Azure & Sentinel** | [08 — Azure & Sentinel Guide](./docs/08-azure-logging-guide.md) | [`cloud-azure-sentinel.png`](./diagrams/cloud-azure-sentinel.png) |
-| **Amazon Web Services (AWS)** | [09 — AWS & Security Lake Guide](./docs/09-aws-logging-guide.md) | [`cloud-aws-security-lake.png`](./diagrams/cloud-aws-security-lake.png) |
-| **Google Cloud Platform (GCP)** | [10 — GCP & Google SecOps Guide](./docs/10-gcp-logging-guide.md) | [`cloud-gcp-secops.png`](./diagrams/cloud-gcp-secops.png) |
-| **Cross-Cloud & Hybrid Federation** | [11 — Cross-Cloud Log Federation](./docs/11-cross-cloud-log-federation.md) | [`cross-cloud-log-federation.png`](./diagrams/cross-cloud-log-federation.png) |
+| **Microsoft Azure & Sentinel** | [08: Azure & Sentinel Guide](./docs/08-azure-logging-guide.md) | [`cloud-azure-sentinel.png`](./diagrams/cloud-azure-sentinel.png) |
+| **Amazon Web Services (AWS)** | [09: AWS & Security Lake Guide](./docs/09-aws-logging-guide.md) | [`cloud-aws-security-lake.png`](./diagrams/cloud-aws-security-lake.png) |
+| **Google Cloud Platform (GCP)** | [10: GCP & Google SecOps Guide](./docs/10-gcp-logging-guide.md) | [`cloud-gcp-secops.png`](./diagrams/cloud-gcp-secops.png) |
+| **Cross-Cloud & Hybrid Federation** | [11: Cross-Cloud Log Federation](./docs/11-cross-cloud-log-federation.md) | [`cross-cloud-log-federation.png`](./diagrams/cross-cloud-log-federation.png) |
 
 ![Cross-Cloud & Hybrid Log Federation](./diagrams/cross-cloud-log-federation.png)
 
@@ -166,6 +166,6 @@ Vendor hosting and agency SOC SIEMs frequently span different clouds. Dedicated 
 - **ACSC / ASD**: Information Security Manual (ISM) *Guidelines for System Monitoring* (`ISM-0580`, `ISM-0585`, `ISM-0988`, `ISM-1228`, `ISM-1405`, `ISM-1815`, `ISM-1988`), *Best Practices for Event Logging and Threat Detection*, *Priority Logs for SIEM Ingestion*, and Essential Eight MFA/Privileged Access visibility. *(Always verify exact ISM control wording against the live release at [cyber.gov.au/ism](https://www.cyber.gov.au/ism).)*
 - **Open-Source Privacy Gateway & Normaliser**: Pair this repo with **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([guide](./docs/12-normalising-and-shipping-with-bower.md)) for host-side Australian PII redaction, default-deny policy enforcement, tamper-evident queueing, AWS/GCP/SQL Server/WEC normalisation, and `bower evidence run` signed Sentinel arrival proof.
 
-## License
+## Licence
 
-MIT — see [`LICENSE`](./LICENSE). Free for vendors, government agencies, integrators, and SOC teams to adopt, embed in RFPs, and adapt.
+MIT (see [`LICENSE`](./LICENSE)). Free for vendors, government agencies, integrators, and SOC teams to adopt, embed in RFPs, and adapt.

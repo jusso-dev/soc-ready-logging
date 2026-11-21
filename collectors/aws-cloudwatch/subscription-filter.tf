@@ -1,4 +1,4 @@
-# AWS Terraform Starter — Two-Stream Security Logging Filter
+# AWS Terraform Starter: Two-Stream Security Logging Filter
 # Filters CloudWatch Logs on `$.stream = "security"` BEFORE Firehose delivery
 # to an Object-Lock (WORM) S3 bucket in ap-southeast-2 (ready for Amazon Security Lake,
 # Microsoft Sentinel S3/SQS CCF, or jusso-dev/Bower bower-cloud).

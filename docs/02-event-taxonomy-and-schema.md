@@ -1,8 +1,8 @@
-# 02 — Canonical Event Taxonomy & Schema
+# 02: Canonical Event Taxonomy & Schema
 
 This guide defines the **canonical SOC-ready security event contract** codified in [`schemas/security-event.schema.json`](../schemas/security-event.schema.json) and [`schemas/event-catalog.json`](../schemas/event-catalog.json).
 
-The schema is deliberately compact so custom software vendors can implement it in a few hours, while giving Government SOCs every field required for **ACSC ISM-0585**, **OWASP Logging Vocabulary**, **Microsoft Sentinel**, **Splunk**, **Elastic (ECS)**, and **OCSF** normalization.
+The schema is deliberately compact so custom software vendors can implement it in a few hours, while giving Government SOCs every field required for **ACSC ISM-0585**, **OWASP Logging Vocabulary**, **Microsoft Sentinel**, **Splunk**, **Elastic (ECS)**, and **OCSF** normalisation.
 
 ---
 
@@ -16,7 +16,7 @@ Every security event MUST be emitted as **one JSON object per line (NDJSON)** wi
 | `timestamp` | UTC ISO-8601 (`...Z`) | Required | Cross-system forensic timeline correlation (ISM-0988) |
 | `stream` | `"security"` | Required | Clean routing filter separating SIEM events from debug logs |
 | `event` | OWASP prefix name | Required | Deterministic detection rules (never parse free-text messages) |
-| `severity` | `INFO` \| `WARN` \| `HIGH` \| `CRITICAL` | Required | Triage prioritization (`DEBUG`/`TRACE` forbidden here) |
+| `severity` | `INFO` \| `WARN` \| `HIGH` \| `CRITICAL` | Required | Triage prioritisation (`DEBUG`/`TRACE` forbidden here) |
 | `outcome` | `success` \| `failure` \| `blocked` \| `unknown` | Required | Instantly distinguishes attempted vs. succeeded attacks |
 | `app` | Object (`id`, `name`, `environment`, `version`, `host`) | Required | Identifies exact system, environment (`prod` vs `uat`), and host (ISM-0585) |
 | `actor` | Object (`type`, `id`, optional `roles`, `tenant_id`, `session_id_hash`) | Required | Immutable principal identity (Entra OID, UUID, service principal) |
@@ -26,8 +26,8 @@ Every security event MUST be emitted as **one JSON object per line (NDJSON)** wi
 
 ### Strongly Recommended Contextual Objects
 
-- `target`: `{ type, id, name, classification }` — Essential for `authz_fail`, `user_*`, `priv_*`, `data_*`, and `config_*` events. Supports Australian PSPF markings (`UNOFFICIAL`, `OFFICIAL`, `OFFICIAL:Sensitive`, `PROTECTED`) and enterprise labels.
-- `http`: `{ method, route, status_code }` — Use **parameterized routes** (`/api/v1/cases/{id}`), never raw URLs with query tokens.
+- `target`: `{ type, id, name, classification }`: Essential for `authz_fail`, `user_*`, `priv_*`, `data_*`, and `config_*` events. Supports Australian PSPF markings (`UNOFFICIAL`, `OFFICIAL`, `OFFICIAL:Sensitive`, `PROTECTED`) and enterprise labels.
+- `http`: `{ method, route, status_code }`: Use **parameterised routes** (`/api/v1/cases/{id}`), never raw URLs with query tokens.
 - `reason`: Short machine-readable snake_case code (e.g., `invalid_credentials`, `mfa_user_denied`, `missing_role`, `invalid_signature`).
 - `details`: Bounded key-value object (max 25 keys) for event-specific attributes (`failed_attempts`, `record_count`, `role_name`, `mfa_method`, `changed_fields`).
 - `compliance`: Optional tags (`owasp_event`, `mitre_attack`, `ism_controls`) to simplify governance reporting.
@@ -42,7 +42,7 @@ Event names follow `<domain>_<action>` in lowercase snake_case, directly aligned
 |---|---|---|---|
 | `authn_*` | Authentication | `authn_login_success`, `authn_login_fail`, `authn_login_success_after_fail`, `authn_login_lockout`, `authn_mfa_success`, `authn_mfa_fail`, `authn_mfa_disabled`, `authn_password_changed`, `authn_token_revoked`, `authn_logout` | **P1** |
 | `session_*` | Session security | `session_anomaly_detected` (token replay, binding mismatch) | **P1** |
-| `authz_*` | Authorization | `authz_fail`, `authz_admin_action`, `authz_impersonation_start` | **P1** |
+| `authz_*` | Authorisation | `authz_fail`, `authz_admin_action`, `authz_impersonation_start` | **P1** |
 | `user_*` | User lifecycle (IAM) | `user_created`, `user_updated`, `user_disabled`, `user_deleted` | **P1** |
 | `priv_*` | Privilege changes | `priv_role_assigned`, `priv_role_revoked` | **P1** |
 | `api_*` | API & credential security | `api_key_created`, `api_key_revoked`, `api_rate_limit_exceeded` | **P1 / P2** |

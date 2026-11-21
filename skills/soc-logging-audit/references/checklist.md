@@ -2,12 +2,12 @@
 
 ## 1. P1 Security Boundaries to Locate
 - Login / OIDC callback / SAML ACS / token issuance -> `authn_login_success`, `authn_login_fail`, `authn_login_success_after_fail`, `authn_login_lockout`
-- MFA verify / enroll / reset / disable -> `authn_mfa_success`, `authn_mfa_fail`, `authn_mfa_disabled`
+- MFA verify / enrol / reset / disable -> `authn_mfa_success`, `authn_mfa_fail`, `authn_mfa_disabled`
 - Password change / reset & token revoke -> `authn_password_changed`, `authn_token_revoked`
-- Authorization middleware / HTTP 403 handler -> `authz_fail`
+- Authorisation middleware / HTTP 403 handler -> `authz_fail`
 - Admin routes & user impersonation -> `authz_admin_action`, `authz_impersonation_start`
 - User & role lifecycle -> `user_created`, `user_disabled`, `user_deleted`, `priv_role_assigned`, `priv_role_revoked`
-- API keys / OAuth secrets / rate limiters -> `api_key_created`, `api_key_revoked`, `api_rate_limit_exceeded` (window-summarized)
+- API keys / OAuth secrets / rate limiters -> `api_key_created`, `api_key_revoked`, `api_rate_limit_exceeded` (window-summarised)
 - Sensitive data export / deletion -> `data_bulk_export`, `data_sensitive_deleted`
 - Security config updates (SSO, CORS, IP allowlist, webhooks) -> `config_security_changed`
 - JWT / SAML / HMAC / mTLS signature failures -> `crypto_verification_fail`

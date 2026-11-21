@@ -1,4 +1,4 @@
-# 11 — Cross-Cloud & Hybrid Log Federation Guide
+# 11: Cross-Cloud & Hybrid Log Federation Guide
 
 In government and enterprise environments, the vendor's hosting cloud and the agency's SOC SIEM **frequently do not match**:
 - Vendor SaaS or custom app runs on **AWS** or **GCP**, while the agency SOC operates **Microsoft Sentinel (Azure)**.
@@ -23,7 +23,7 @@ This guide provides **battle-tested, zero-static-secret patterns** for moving `s
 
 ## 2. Inter-Cloud Transport Matrix
 
-> **Unified open-source option — [jusso-dev/Bower](https://github.com/jusso-dev/Bower)**: Instead of stitching together different connectors and redaction rules per cloud, **Bower** (`bower-cloud` + signed `aws-security` / `gcp-security` packs) ingests custom apps, legacy SQL Server / Windows Event Logs, AWS (EventBridge→SQS / Firehose→S3, IAM roles only), and GCP (Pub/Sub, WIF only—key files refused) through **one deterministic host-side Australian PII redaction engine and default-deny policy**, then delivers with a tamper-evident queue ledger to **Microsoft Sentinel**, **S3**, or **Splunk HEC / HTTP NDJSON**—and proves arrival with `bower evidence run`. See [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md).
+> **Unified open-source option ([jusso-dev/Bower](https://github.com/jusso-dev/Bower))**: Instead of stitching together different connectors and redaction rules per cloud, **Bower** (`bower-cloud` + signed `aws-security` / `gcp-security` packs) ingests custom apps, legacy SQL Server / Windows Event Logs, AWS (EventBridge→SQS / Firehose→S3, IAM roles only), and GCP (Pub/Sub, WIF only, with key files refused) through **one deterministic host-side Australian PII redaction engine and default-deny policy**, then delivers with a tamper-evident queue ledger to **Microsoft Sentinel**, **S3**, or **Splunk HEC / HTTP NDJSON**, and proves arrival with `bower evidence run`. See [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md).
 
 | Source Environment | Destination SIEM | Recommended Pattern (Preferred) | Alternative / Low-Ops Pattern | Authentication |
 |---|---|---|---|---|
@@ -39,7 +39,7 @@ This guide provides **battle-tested, zero-static-secret patterns** for moving `s
 
 ## 3. Deep-Dive Recipes for the Most Common Government Paths
 
-### Pattern A — AWS Application -> Agency Microsoft Sentinel (Azure)
+### Pattern A: AWS Application -> Agency Microsoft Sentinel (Azure)
 
 This is the #1 multi-cloud pattern in Australian Government (vendor hosts on AWS Sydney; agency SOC runs Microsoft Sentinel in Azure Australia East):
 
@@ -54,7 +54,7 @@ This is the #1 multi-cloud pattern in Australian Government (vendor hosts on AWS
 
 ---
 
-### Pattern B — GCP Application -> Agency Microsoft Sentinel (Azure)
+### Pattern B: GCP Application -> Agency Microsoft Sentinel (Azure)
 
 1. **In GCP (Vendor Project)**:
    - Create a Cloud Logging Router Sink with filter `jsonPayload.stream="security"` targeting a dedicated **Pub/Sub topic** + pull subscription (with a Dead-Letter Topic).
@@ -65,7 +65,7 @@ This is the #1 multi-cloud pattern in Australian Government (vendor hosts on AWS
 
 ---
 
-### Pattern C — Azure Application -> Agency AWS Security Lake or Splunk
+### Pattern C: Azure Application -> Agency AWS Security Lake or Splunk
 
 1. **In Azure (Vendor Subscription)**:
    - Stream `stream == "security"` events via DCR or app collector into a dedicated **Azure Event Hub** (with Private Endpoint & retention >= 7 days for replay safety).
@@ -74,7 +74,7 @@ This is the #1 multi-cloud pattern in Australian Government (vendor hosts on AWS
 
 ---
 
-### Pattern D — On-Premises / Hybrid Government Network -> Cloud SIEM
+### Pattern D: On-Premises / Hybrid Government Network -> Cloud SIEM
 
 For air-gapped-adjacent or private-networked government data centres:
 

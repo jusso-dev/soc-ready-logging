@@ -1,4 +1,4 @@
-# 08 — Azure & Microsoft Sentinel Implementation Guide
+# 08: Azure & Microsoft Sentinel Implementation Guide
 
 Microsoft Azure and **Microsoft Sentinel** are the most common target stack across Australian Government agencies and regulated enterprises. This guide shows custom software vendors how to implement the **two-stream architecture** cleanly on Azure with zero static secrets, strict noise filtering before ingestion, and full ACSC ISM alignment.
 
@@ -66,7 +66,7 @@ If your app runs on **AKS** or **Azure Container Apps**, avoid embedding Azure M
 2. Run **OpenTelemetry Collector** or **Fluent Bit** as a DaemonSet/sidecar that:
    - Routes `stream == "security"` -> Azure Monitor Logs Ingestion API (DCE/DCR) -> Sentinel.
    - Routes `stream != "security"` -> Application Insights / Auxiliary logs.
-3. **Want host-side Australian PII redaction, default-deny selection, tamper-evident local buffering, DCR drift checks, and signed Sentinel arrival proof (`bower evidence run`)?** Deploy **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([full guide](./12-normalising-and-shipping-with-bower.md))—it supports both AMA JSONL spooling and the real Azure Monitor Logs Ingestion API (plus Azure Functions isolated worker and legacy SQL Server / Windows Event Log adapters).
+3. **Want host-side Australian PII redaction, default-deny selection, tamper-evident local buffering, DCR drift checks, and signed Sentinel arrival proof (`bower evidence run`)?** Deploy **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([full guide](./12-normalising-and-shipping-with-bower.md)). It supports both AMA JSONL spooling and the real Azure Monitor Logs Ingestion API (plus Azure Functions isolated worker and legacy SQL Server / Windows Event Log adapters).
 
 ---
 
@@ -81,7 +81,7 @@ If your app runs on **AKS** or **Azure Container Apps**, avoid embedding Azure M
 ## 5. Azure Checklist for Government ATO / IRAP
 
 - [ ] Data residency pinned to `australiaeast` / `australiasoutheast` (sovereign region as required).
-- [ ] Zero shared workspace keys or SAS tokens — Managed Identity / Workload Identity only.
+- [ ] Zero shared workspace keys or SAS tokens (Managed Identity / Workload Identity only).
 - [ ] App identity has `Monitoring Metrics Publisher` on the DCR only (cannot query/delete Sentinel logs).
 - [ ] DCR KQL transform drops non-`security` streams and `DEBUG`/`/healthz` noise prior to billing.
 - [ ] Sentinel Analytics rules from [`detections/sentinel-kql/soc-starter-detections.kql`](../detections/sentinel-kql/soc-starter-detections.kql) deployed and tested with `scripts/generate_test_events.py`.

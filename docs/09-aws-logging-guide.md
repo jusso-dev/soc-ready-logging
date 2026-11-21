@@ -1,4 +1,4 @@
-# 09 — AWS Security Logging Implementation Guide
+# 09: AWS Security Logging Implementation Guide
 
 This guide shows custom software vendors deploying on **Amazon Web Services (AWS)** how to isolate high-value `stream: "security"` events from noisy operational telemetry, route them cleanly into **Amazon Security Lake (OCSF)** or an agency SIEM, and enforce tamper-resistant multi-account log protection in line with **ACSC ISM** and **OWASP**.
 
@@ -17,7 +17,7 @@ This guide shows custom software vendors deploying on **Amazon Web Services (AWS
 
 ## 2. Routing Recipes (Copy-Paste)
 
-### Option A — CloudWatch Logs Subscription Filter (Lambda, ECS `awslogs`, App Runner)
+### Option A: CloudWatch Logs Subscription Filter (Lambda, ECS `awslogs`, App Runner)
 
 Keep emitting single-line JSON to `stdout` and attach a **Subscription Filter** to the log group so only `stream: "security"` events ever enter Amazon Data Firehose:
 
@@ -35,9 +35,9 @@ aws logs put-subscription-filter \
   --role-arn "arn:aws:iam::111122223333:role/cw-to-firehose-role"
 ```
 
-### Option B — ECS FireLens / EKS Fluent Bit (Zero CloudWatch Ingestion Tax on Security Events)
+### Option B: ECS FireLens / EKS Fluent Bit (Zero CloudWatch Ingestion Tax on Security Events)
 
-For higher-volume containerized workloads, route directly from **Fluent Bit / FireLens** so you do not pay twice (CloudWatch Logs + Firehose):
+For higher-volume containerised workloads, route directly from **Fluent Bit / FireLens** so you do not pay twice (CloudWatch Logs + Firehose):
 
 ```ini
 [FILTER]

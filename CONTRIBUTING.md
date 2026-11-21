@@ -4,7 +4,7 @@ Contributions from custom software vendors, government security architects, and 
 
 ## What makes a great contribution?
 
-- **Event catalog additions** (`schemas/event-catalog.json`): New high-value security events with clear OWASP vocabulary alignment, MITRE ATT&CK technique IDs, ACSC ISM / OWASP ASVS mappings, and noise-control notes.
+- **Event catalogue additions** (`schemas/event-catalog.json`): New high-value security events with clear OWASP vocabulary alignment, MITRE ATT&CK technique IDs, ACSC ISM / OWASP ASVS mappings, and noise-control notes.
 - **Language reference wrappers** (`examples/`): Minimal, dependency-light security logger implementations (e.g., Java, Rust, PHP, Ruby) that follow `schemas/security-event.schema.json`, redact secrets/PII, and strip log-injection characters.
 - **Detection rules** (`detections/`): Tested Sigma, Microsoft Sentinel KQL, Splunk SPL, or Elastic EQL/KQL queries targeting events in the canonical schema.
 - **Agent skill improvements** (`skills/`): Tighter instructions, sharper verification steps, or framework-specific recipes that reduce vendor implementation effort.

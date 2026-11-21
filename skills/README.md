@@ -11,7 +11,7 @@ They let custom software vendor teams go from zero (or noisy, non-compliant logs
 | [`soc-logging-audit`](./soc-logging-audit/SKILL.md) | First step on any existing codebase | Finds missing authn/authz/IAM/export/tamper hooks, SIEM noise (healthz, debug, static), secret/PII log leaks, and CWE-117 injection hazards. |
 | [`soc-logging-implement`](./soc-logging-implement/SKILL.md) | Adding or upgrading security logging | Implements a minimal two-stream `SecurityLogger` wrapper (TS, Python, C#/.NET, Go, Java) with canonical schema, automatic redaction, UTC timestamps, and trusted-proxy IP handling. |
 | [`soc-logging-verify`](./soc-logging-verify/SKILL.md) | Testing & CI/CD hardening | Writes positive & negative tests (redaction, CWE-117 injection), validates emitted NDJSON (`validate_logs.py --strict`), and checks Signal-to-Noise score (`>= 90/100`). |
-| [`soc-handoff-pack`](./soc-handoff-pack/SKILL.md) | UAT / ATO / SOC onboarding | Generates the Day-1 Government SOC Handoff Pack (`docs/SOC-HANDOFF-PACK.md`), implemented event catalog, golden sample NDJSON, and starter Sentinel KQL / Sigma / SPL rules. |
+| [`soc-handoff-pack`](./soc-handoff-pack/SKILL.md) | UAT / ATO / SOC onboarding | Generates the Day-1 Government SOC Handoff Pack (`docs/SOC-HANDOFF-PACK.md`), implemented event catalogue, golden sample NDJSON, and starter Sentinel KQL / Sigma / SPL rules. |
 
 ---
 

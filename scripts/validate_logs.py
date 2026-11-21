@@ -5,7 +5,7 @@ Zero external dependencies (Python 3.9+ stdlib only). Checks:
   1. Single-line JSON parsing (NDJSON)
   2. Required canonical fields & allowed enum values
   3. UTC ISO-8601 timestamp format (ACSC ISM-0988)
-  4. OWASP event prefix & catalog membership
+  4. OWASP event prefix & catalogue membership
   5. Secret & regulated PII leakage (passwords, Bearer/JWT, PEM, TFN, PAN, sensitive keys)
   6. CWE-117 log injection (embedded newlines, control chars, ANSI escape sequences)
   7. SIEM noise contamination (health probes, static assets, DEBUG/TRACE)
@@ -314,7 +314,7 @@ def validate_file(path: Path, strict: bool = False) -> Dict[str, Any]:
 def main(argv: List[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate NDJSON security logs against the canonical SOC-ready schema.")
     parser.add_argument("input", type=Path, help="Path to NDJSON log file")
-    parser.add_argument("--strict", action="store_true", help="Treat unknown catalog events and noise markers as errors")
+    parser.add_argument("--strict", action="store_true", help="Treat unknown catalogue events and noise markers as errors")
     parser.add_argument("--json", action="store_true", dest="as_json", help="Emit machine-readable JSON output")
     args = parser.parse_args(argv)
 

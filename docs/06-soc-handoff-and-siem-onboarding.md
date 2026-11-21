@@ -1,4 +1,4 @@
-# 06 — SOC Handoff & SIEM Onboarding Playbook
+# 06: SOC Handoff & SIEM Onboarding Playbook
 
 Good logging code is only half the job. A Government SOC cannot monitor what it hasn't onboarded, parsed, baselined, and alerted on. This playbook gives vendors and SOC engineers a clean, repeatable **Day-1 onboarding path**.
 
@@ -6,11 +6,11 @@ Good logging code is only half the job. A Government SOC cannot monitor what it 
 
 ## 1. Recommended Transport Patterns
 
-Pick the cleanest transport already supported by the agency's platform—avoid bespoke polling scripts unless the application is legacy and cannot push logs:
+Pick the cleanest transport already supported by the agency's platform, and avoid bespoke polling scripts unless the application is legacy and cannot push logs:
 
 | Hosting Pattern | Recommended Transport | Deep-Dive Guide |
 |---|---|---|
-| **Any Cloud / Legacy / Regulated AU App (Recommended Normaliser)** | **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** — host-side AU PII redaction (TFN/Medicare/IHI/ABN/CRN), default-deny signed policies, tamper-evident SQLite queue ledger, `Bower.Source.SqlServer`, `bower-cloud` (AWS & GCP), shipping to Sentinel (DCR/AMA), S3, or Splunk HEC + signed `bower evidence run` proof of arrival. | [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md) |
+| **Any Cloud / Legacy / Regulated AU App (Recommended Normaliser)** | **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)**: host-side AU PII redaction (TFN/Medicare/IHI/ABN/CRN), default-deny signed policies, tamper-evident SQLite queue ledger, `Bower.Source.SqlServer`, `bower-cloud` (AWS & GCP), shipping to Sentinel (DCR/AMA), S3, or Splunk HEC + signed `bower evidence run` proof of arrival. | [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md) |
 | **Azure (App Service / AKS / Container Apps / Functions)** | Managed Identity -> Azure Monitor Logs Ingestion API (DCE + DCR KQL filter on `stream == "security"`) -> Microsoft Sentinel (`CustomAppSecurity_CL`). | [`08-azure-logging-guide.md`](./08-azure-logging-guide.md) |
 | **AWS (ECS / EKS / Lambda / EC2)** | FireLens/Fluent Bit or CloudWatch Subscription Filter (`{ $.stream = "security" }`) -> Amazon Data Firehose -> Isolated Security Account S3 (Object Lock) / Security Lake (OCSF) / SIEM. | [`09-aws-logging-guide.md`](./09-aws-logging-guide.md) |
 | **GCP (Cloud Run / GKE / Compute Engine)** | Structured JSON stdout -> Cloud Logging Router Sink (`jsonPayload.stream="security"`) -> Pub/Sub + Locked Log Bucket -> Google SecOps (Chronicle). | [`10-gcp-logging-guide.md`](./10-gcp-logging-guide.md) |
@@ -20,7 +20,7 @@ Pick the cleanest transport already supported by the agency's platform—avoid b
 
 ## 2. True Client IP Behind Gateways & WAFs
 
-Government apps almost always sit behind a WAF, Front Door, CloudFront, API Gateway, or reverse proxy. If your logger reads `req.socket.remoteAddress`, every security event will show `10.x.x.x`—making IP correlation impossible.
+Government apps almost always sit behind a WAF, Front Door, CloudFront, API Gateway, or reverse proxy. If your logger reads `req.socket.remoteAddress`, every security event will show `10.x.x.x`, making IP correlation impossible.
 
 **Rule**:
 - Configure an explicit list of **trusted proxy CIDRs**.
@@ -31,7 +31,7 @@ Government apps almost always sit behind a WAF, Front Door, CloudFront, API Gate
 
 ## 3. Pipeline Liveness: The Heartbeat Contract
 
-The #1 silent failure in SIEM operations is a log pipeline breaking during an app upgrade, certificate expiry, or DCR change—leaving the SOC blind for months.
+The #1 silent failure in SIEM operations is a log pipeline breaking during an app upgrade, certificate expiry, or DCR change, leaving the SOC blind for months.
 
 **Requirement**:
 - Emit `sys_logging_heartbeat` once every **15–60 minutes** per production service.

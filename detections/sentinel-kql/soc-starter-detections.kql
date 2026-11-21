@@ -1,5 +1,5 @@
 // ============================================================================
-// Microsoft Sentinel KQL — Starter Detections for soc-ready-logging (v1.0.0)
+// Microsoft Sentinel KQL: Starter Detections for soc-ready-logging (v1.0.0)
 // Assumes custom table `CustomAppSecurity_CL` (or replace with your DCR table).
 // ============================================================================
 
@@ -17,7 +17,7 @@ CustomAppSecurity_CL
     by AppId, ActorId, SrcIp, bin(TimeGenerated, 15m)
 | where DirectAfterFail > 0 or (FailCount >= 5 and SuccessCount >= 1)
 
-// 2. Authorization / IDOR Probing Burst (HTTP 403 Spike) (T1213)
+// 2. Authorisation / IDOR Probing Burst (HTTP 403 Spike) (T1213)
 CustomAppSecurity_CL
 | where TimeGenerated > ago(1h)
 | where stream == "security" and tostring(app.environment) == "prod"

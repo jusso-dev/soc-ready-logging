@@ -1,4 +1,4 @@
-# GCP Terraform Starter — Two-Stream Security Logging Sink + Locked Audit Bucket
+# GCP Terraform Starter: Two-Stream Security Logging Sink + Locked Audit Bucket
 # Routes ONLY `jsonPayload.stream="security"` to an isolated Security Project's
 # Pub/Sub topic (for Google SecOps / Sentinel WIF CCF / jusso-dev/Bower bower-cloud)
 # and an immutable 400-day Locked Log Bucket in australia-southeast1.

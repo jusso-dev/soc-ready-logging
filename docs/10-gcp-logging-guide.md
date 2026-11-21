@@ -1,4 +1,4 @@
-# 10 — GCP & Google Security Operations (Chronicle) Implementation Guide
+# 10: GCP & Google Security Operations (Chronicle) Implementation Guide
 
 This guide shows custom software vendors running on **Google Cloud Platform (GCP)** how to separate `stream: "security"` events cleanly in **Cloud Logging Router**, prevent operational noise from inflating SIEM costs, and deliver tamper-evident telemetry into **Google Security Operations (Chronicle SIEM)** or BigQuery in alignment with **OWASP** and **ACSC ISM**.
 
@@ -8,7 +8,7 @@ This guide shows custom software vendors running on **Google Cloud Platform (GCP
 
 ## 1. Two-Stream Architecture on GCP
 
-Cloud Run, GKE, and Compute Engine (Ops Agent) automatically parse single-line JSON written to `stdout` into Cloud Logging's structured `jsonPayload` object—making two-stream routing effortless:
+Cloud Run, GKE, and Compute Engine (Ops Agent) automatically parse single-line JSON written to `stdout` into Cloud Logging's structured `jsonPayload` object, making two-stream routing effortless:
 
 | Stream | GCP Compute Sources | Cloud Logging Router Rule | Destination | Retention & Protection |
 |---|---|---|---|---|
@@ -19,7 +19,7 @@ Cloud Run, GKE, and Compute Engine (Ops Agent) automatically parse single-line J
 
 ## 2. Cloud Logging Router Sink & Exclusion Filter (Copy-Paste)
 
-### Step 1 — Route Only `stream == "security"` to the Security Project's Pub/Sub Topic
+### Step 1: Route Only `stream == "security"` to the Security Project's Pub/Sub Topic
 
 ```bash
 gcloud logging sinks create soc-security-events-sink \
@@ -30,7 +30,7 @@ gcloud logging sinks create soc-security-events-sink \
 
 Grant the sink's generated writer identity (`writerIdentity`) **only** `roles/pubsub.publisher` on the target topic in the isolated security project.
 
-### Step 2 — Create a Locked Audit Bucket (ISM-1815 / ISM-1988 Tamper-Evident Archive)
+### Step 2: Create a Locked Audit Bucket (ISM-1815 / ISM-1988 Tamper-Evident Archive)
 
 ```bash
 gcloud logging buckets create soc-security-archive \
@@ -40,9 +40,9 @@ gcloud logging buckets create soc-security-archive \
   --locked
 ```
 
-> Locking the Cloud Logging bucket makes the 400-day (12+ month) retention policy irreversible—even by Project Owners—directly satisfying ACSC ISM-1815 log tamper protection and ISM-1988 searchable retention.
+> Locking the Cloud Logging bucket makes the 400-day (12+ month) retention policy irreversible, even by Project Owners, directly satisfying ACSC ISM-1815 log tamper protection and ISM-1988 searchable retention.
 
-### Step 3 — Exclude Health Probes & Debug Noise from `_Default`
+### Step 3: Exclude Health Probes & Debug Noise from `_Default`
 
 ```bash
 gcloud logging sinks update _Default \

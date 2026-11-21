@@ -1,4 +1,4 @@
-# OpenTelemetry Collector — Two-Stream Security vs. Operational Router
+# OpenTelemetry Collector: Two-Stream Security vs. Operational Router
 # Routes `stream == "security"` events to Bower (recommended) or a SIEM endpoint
 # with persistent disk buffering, while diverting operational/debug logs to APM.
 

@@ -1,6 +1,6 @@
 {
   "catalog_version": "1.0.0",
-  "description": "High-value, low-noise application security event catalog for custom software vendors targeting Government and Enterprise SOC teams (aligned to OWASP Logging Vocabulary, OWASP ASVS, and ACSC ISM System Monitoring).",
+  "description": "High-value, low-noise application security event catalogue for custom software vendors targeting Government and Enterprise SOC teams (aligned to OWASP Logging Vocabulary, OWASP ASVS, and ACSC ISM System Monitoring).",
   "events": [
     {
       "event": "authn_login_success",
@@ -23,7 +23,7 @@
       "noise_risk": "medium",
       "description": "Authentication attempt failed (invalid credentials, expired account, unknown user).",
       "required_details": ["auth_method"],
-      "noise_control": "Never log the submitted password; normalize reason codes so brute force and password spraying can be aggregated.",
+      "noise_control": "Never log the submitted password; normalise reason codes so brute force and password spraying can be aggregated.",
       "mitre_attack": ["T1110", "T1110.003"],
       "owasp_asvs": ["V7.2.1", "V16.3.1"],
       "ism_refs": ["ISM-0585", "ISM-1228"]
@@ -309,7 +309,7 @@
       "noise_risk": "high",
       "description": "Access to a high-sensitivity record (e.g., OFFICIAL:Sensitive / PROTECTED / regulated citizen record).",
       "required_details": ["record_count"],
-      "noise_control": "Only log access to explicitly classified/sensitive holdings—never routine public or catalog reads.",
+      "noise_control": "Only log access to explicitly classified/sensitive holdings, never routine public or catalogue reads.",
       "mitre_attack": ["T1213", "T1530"],
       "owasp_asvs": ["V16.3.2"],
       "ism_refs": ["ISM-0585", "ISM-1228"]
@@ -359,9 +359,9 @@
       "default_severity": "WARN",
       "siem_priority": "P2",
       "noise_risk": "high",
-      "description": "High-confidence injection, path traversal, SSRF, or deserialization payload blocked by application controls.",
+      "description": "High-confidence injection, path traversal, SSRF, or deserialisation payload blocked by application controls.",
       "required_details": ["rule_triggered", "field_name"],
-      "noise_control": "Do NOT emit for routine form typos (e.g., missing email @); emit only on explicit security control blocks (traversal, SSRF allowlist block, signature/deserialization rejection).",
+      "noise_control": "Do NOT emit for routine form typos (e.g., missing email @); emit only on explicit security control blocks (traversal, SSRF allowlist block, signature/deserialisation rejection).",
       "mitre_attack": ["T1190"],
       "owasp_asvs": ["V7.2.2", "V16.3.2"],
       "ism_refs": ["ISM-0585", "ISM-1228"]

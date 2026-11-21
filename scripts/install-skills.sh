@@ -24,7 +24,7 @@ Install soc-ready-logging Agent Skills (SKILL.md) for AI coding agents.
 
 Options:
   --target <name>       Target agent format:
-                          agents      (.agents/skills — universal standard)
+                          agents      (.agents/skills, universal standard)
                           claude      (Claude Code: .claude/skills or ~/.claude/skills)
                           codex       (Codex: .codex/skills or ~/.codex/skills)
                           cursor      (Cursor: .cursor/skills or ~/.cursor/skills)

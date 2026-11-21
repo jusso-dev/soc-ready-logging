@@ -173,7 +173,7 @@
         "user_agent": {
           "type": "string",
           "maxLength": 512,
-          "description": "Sanitized client User-Agent string."
+          "description": "Sanitised client User-Agent string."
         },
         "asn": {
           "type": "integer",
@@ -203,7 +203,7 @@
         "name": {
           "type": "string",
           "maxLength": 256,
-          "description": "Sanitized resource name or path (never containing secrets or sensitive PII)."
+          "description": "Sanitised resource name or path (never containing secrets or sensitive PII)."
         },
         "classification": {
           "type": "string",
@@ -223,7 +223,7 @@
         "route": {
           "type": "string",
           "maxLength": 256,
-          "description": "Parameterized route template (e.g., /api/v1/cases/{id}) without query secrets."
+          "description": "Parameterised route template (e.g., /api/v1/cases/{id}) without query secrets."
         },
         "status_code": {
           "type": "integer",

@@ -6,16 +6,16 @@ If you are using a web chat or IDE assistant without skill loading, copy-paste t
 
 ---
 
-## Prompt 1 — Audit Existing Codebase
+## Prompt 1: Audit Existing Codebase
 ```text
 Audit this repository's logging against OWASP Logging Cheat Sheet, OWASP ASVS V16, and ACSC ISM System Monitoring (ISM-0585, ISM-0988, ISM-1228, ISM-1405).
-1. Identify every authentication, MFA, authorization (403), user lifecycle, privilege change, API key, sensitive data export/delete, security config, and crypto verification path—and note which ones lack structured security events.
+1. Identify every authentication, MFA, authorisation (403), user lifecycle, privilege change, API key, sensitive data export/delete, security config, and crypto verification path, and note which ones lack structured security events.
 2. Flag any noisy logging that would pollute a SOC SIEM (health checks, static assets, DEBUG/TRACE, per-request valid-JWT logs, raw stack traces).
 3. Flag any security hazards: logging passwords, Bearer/JWT tokens, cookies, API keys, raw request bodies, regulated PII (TFN/Medicare/credit cards), or plain-text string interpolation vulnerable to CWE-117 log injection.
-Output a prioritized remediation table with exact file paths and line numbers.
+Output a prioritised remediation table with exact file paths and line numbers.
 ```
 
-## Prompt 2 — Implement Two-Stream SOC-Ready Security Logger (+ Bower Integration)
+## Prompt 2: Implement Two-Stream SOC-Ready Security Logger (+ Bower Integration)
 ```text
 Implement a lightweight, zero-bloat SecurityLogger wrapper in this repo following the canonical schema in `soc-ready-logging/schemas/security-event.schema.json` (and compatible with our open-source security log normaliser & Australian privacy gateway `jusso-dev/Bower`):
 - Enforce two-stream separation: emit `stream: "security"` single-line JSON (NDJSON) for SOC SIEM events, keeping debug/health/perf logs on the operational logger.
@@ -25,7 +25,7 @@ Implement a lightweight, zero-bloat SecurityLogger wrapper in this repo followin
 - Wire the wrapper into all P1 security boundaries identified in the audit without adding noisy per-request logging.
 ```
 
-## Prompt 3 — Write Automated Contract & Hygiene Tests
+## Prompt 3: Write Automated Contract & Hygiene Tests
 ```text
 Add automated tests proving our security logger meets OWASP and ACSC SOC requirements:
 1. Positive tests verifying authn_login_fail, authn_login_success_after_fail, authz_fail, priv_role_assigned, data_bulk_export, and sys_logging_heartbeat emit valid NDJSON matching `schemas/security-event.schema.json`.
@@ -34,7 +34,7 @@ Add automated tests proving our security logger meets OWASP and ACSC SOC require
 4. Capture test output to NDJSON and validate it with `validate_logs.py --strict` and `score_signal_noise.py` (target score >= 90/100).
 ```
 
-## Prompt 4 — Generate the Day-1 Government SOC Handoff Pack
+## Prompt 4: Generate the Day-1 Government SOC Handoff Pack
 ```text
 Generate `docs/SOC-HANDOFF-PACK.md` for this application based on the actual security events implemented in the codebase:
 - Document app.id, environments, hosting, IdP, transport mechanism, trusted-proxy client IP extraction, and heartbeat interval.

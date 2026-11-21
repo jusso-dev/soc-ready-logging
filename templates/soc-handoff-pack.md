@@ -1,4 +1,4 @@
-# Vendor Security Logging — Day-1 SOC Handoff Pack
+# Vendor Security Logging: Day-1 SOC Handoff Pack
 
 > Complete this document before UAT sign-off / Authority to Operate (ATO), or generate a pre-filled version with `python3 scripts/generate_soc_handoff.py`.
 
@@ -26,7 +26,7 @@
 - **Transport mechanism**: `e.g. Bower Privacy Gateway (jusso-dev/Bower) -> Azure Monitor Logs Ingestion API (DCE/DCR) -> CustomAppSecurity_CL (or AMA spool / S3 / Splunk HEC)`
 - **Host-side privacy & default-deny policy**: `e.g. Bower Privacy & Secret Protection Engine (AU TFN/Medicare/IHI/ABN/CRN + secrets) + signed Pack version vX.Y`
 - **Tamper evidence & write-only isolation (ACSC ISM-1405 / ISM-1815)**: Application runtime credentials cannot query, modify, or delete ingested SIEM records (and Bower maintains a hash-chained SQLite WAL queue ledger).
-- **Time synchronization (ACSC ISM-0988)**: All timestamps emitted in UTC ISO-8601 (`...Z`) from NTP-synced hosts.
+- **Time synchronisation (ACSC ISM-0988)**: All timestamps emitted in UTC ISO-8601 (`...Z`) from NTP-synced hosts.
 - **Client IP preservation**: True client IP extracted from trusted gateway header (`e.g. X-Azure-ClientIP` / rightmost untrusted `X-Forwarded-For` behind WAF CIDR `x.x.x.x/24`).
 - **Pipeline liveness heartbeat**: `sys_logging_heartbeat` emitted every `15` minutes per production service. Alert if silent > `90` minutes.
 
@@ -41,7 +41,7 @@
 
 ---
 
-## 4. Implemented Security Event Catalog
+## 4. Implemented Security Event Catalogue
 
 | Event (`event`) | Category | Default Severity | Priority | Trigger Condition |
 |---|---|---|---|---|
@@ -50,7 +50,7 @@
 | `authn_login_success_after_fail` | `authentication` | `HIGH` | P1 | Login succeeded after >= 3 failures in 10 min |
 | `authn_mfa_fail` | `authentication` | `WARN` | P1 | MFA challenge denied, expired, or invalid |
 | `authn_mfa_disabled` | `authentication` | `CRITICAL` | P1 | MFA reset or disabled |
-| `authz_fail` | `authorization` | `WARN` | P1 | Server-side HTTP 403 authorization denial |
+| `authz_fail` | `authorization` | `WARN` | P1 | Server-side HTTP 403 authorisation denial |
 | `priv_role_assigned` | `privilege` | `HIGH` | P1 | Role or privilege granted |
 | `user_created` | `iam` | `WARN` | P1 | New account provisioned |
 | `data_bulk_export` | `data_access` | `HIGH` | P1 | Export >= 50 sensitive records |

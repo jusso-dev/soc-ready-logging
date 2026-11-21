@@ -6,7 +6,7 @@ Use this pass/fail checklist for pre-release engineering sign-off and Government
 |---|---|---|---|---|
 | 1 | Two-stream separation enforced (`stream: "security"` isolated from debug/health/perf) | ACSC Priority Logs | Inspect collector config + `score_signal_noise.py` (`0%` noise) | [ ] |
 | 2 | 100% of security events validate against `schemas/security-event.schema.json` | OWASP Logging Vocab / ISM-0585 | `python3 scripts/validate_logs.py <capture.ndjson> --strict` | [ ] |
-| 3 | All timestamps are UTC ISO-8601 (`...Z`) from NTP-synchronized hosts | ACSC ISM-0988 | Schema validator + host NTP check | [ ] |
+| 3 | All timestamps are UTC ISO-8601 (`...Z`) from NTP-synchronised hosts | ACSC ISM-0988 | Schema validator + host NTP check | [ ] |
 | 4 | True client IP captured behind WAF / gateway (not internal LB IP) | ISM-0585 / OWASP | Trigger UAT request via WAF and verify `source.ip` | [ ] |
 | 5 | Every request carries a `correlation_id` matching gateway/WAF trace ID | OWASP ASVS V16.3 | Correlate 1 test request across WAF + App SIEM tables | [ ] |
 | 6 | Zero secrets, tokens, JWTs, passwords, or unredacted TFNs/Medicare/PANs in logs | OWASP ASVS V7.1 / Privacy Act | Negative test sending fake Bearer/password/TFN -> confirm `[REDACTED]` | [ ] |

@@ -158,7 +158,7 @@ def audit_directory(target_dir: Path) -> Dict[str, Any]:
 def render_markdown(report: Dict[str, Any]) -> str:
     s = report["summary"]
     lines = [
-        f"# Codebase Security Logging Audit — `{report['target']}`",
+        f"# Codebase Security Logging Audit: `{report['target']}`",
         "",
         f"- **Source files scanned:** `{report['files_scanned']}`",
         f"- **Findings:** `{s['HIGH']}` HIGH | `{s['MEDIUM']}` MEDIUM | `{s['LOW']}` LOW",

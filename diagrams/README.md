@@ -4,7 +4,7 @@ All diagrams are generated from [`generate_diagrams.py`](./generate_diagrams.py)
 
 - **One consistent font family** (`Helvetica`) across titles, clusters, nodes, and edge labels
 - **Official cloud architecture icons** for **Microsoft Azure**, **Amazon Web Services (AWS)**, **Google Cloud Platform (GCP)**, and OSS / On-Premises tooling
-- **Consistent color semantics**: Emerald (`stream == "security"` -> SIEM), Slate dashed (`stream != "security"` -> Operational/APM), Blue/Orange (Zero-Trust Cross-Cloud Federation)
+- **Consistent colour semantics**: Emerald (`stream == "security"` -> SIEM), Slate dashed (`stream != "security"` -> Operational/APM), Blue/Orange (Zero-Trust Cross-Cloud Federation)
 
 ## Regenerating Diagrams
 

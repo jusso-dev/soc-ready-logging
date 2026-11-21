@@ -1,4 +1,4 @@
-# 04 — OWASP & ACSC (ASD) Standards Traceability Matrix
+# 04: OWASP & ACSC (ASD) Standards Traceability Matrix
 
 Government agencies and IRAP assessors rarely accept "we use a logging library" as compliance evidence. They need clear traceability between **what your application emits** and the exact **ACSC ISM** and **OWASP** requirements.
 
@@ -6,7 +6,7 @@ Government agencies and IRAP assessors rarely accept "we use a logging library" 
 
 ---
 
-## 1. ACSC Information Security Manual (ISM) — Guidelines for System Monitoring
+## 1. ACSC Information Security Manual (ISM): Guidelines for System Monitoring
 
 | ACSC ISM Area / Control | Requirement Summary | How `soc-ready-logging` Satisfies It |
 |---|---|---|
@@ -38,11 +38,11 @@ Government agencies and IRAP assessors rarely accept "we use a logging library" 
 
 | OWASP Standard | Specific Guidance / Chapter | Implementation in This Repo |
 |---|---|---|
-| **OWASP Logging Cheat Sheet** | Log authn/authz/input/admin events; never log credentials, tokens, or unnecessary PII; prevent log injection; centralize tamper-resistant logs. | Full coverage across `docs/02`–`05`, `examples/` reference loggers, and automated checks in `scripts/validate_logs.py`. |
-| **OWASP Application Logging Vocabulary Cheat Sheet** | Standardized event prefixes (`authn_*`, `authz_*`, `user_*`, `sys_*`, `input_*`, etc.) in structured JSON. | `schemas/event-catalog.json` adopts OWASP prefix conventions and maps each canonical event to `compliance.owasp_event`. |
+| **OWASP Logging Cheat Sheet** | Log authn/authz/input/admin events; never log credentials, tokens, or unnecessary PII; prevent log injection; centralise tamper-resistant logs. | Full coverage across `docs/02`–`05`, `examples/` reference loggers, and automated checks in `scripts/validate_logs.py`. |
+| **OWASP Application Logging Vocabulary Cheat Sheet** | Standardised event prefixes (`authn_*`, `authz_*`, `user_*`, `sys_*`, `input_*`, etc.) in structured JSON. | `schemas/event-catalog.json` adopts OWASP prefix conventions and maps each canonical event to `compliance.owasp_event`. |
 | **OWASP ASVS v4.0.3 (Chapter V7)** | **V7.1** Log Content (no secrets/PII, sufficient context); **V7.2** Log Processing (SIEM-consumable); **V7.3** Log Protection (tamper resistance); **V7.4** Error Handling (safe client errors). | Automated PII/secret & CWE-117 checks in `validate_logs.py`; generic error guidance in `docs/05`. |
-| **OWASP ASVS v5.0 (Chapter V16)** | **V16.3** Centralized Security Logging (authn, factor metadata, crypto/TLS/signature/authz failures); **V16.4** Log Protection & Integrity; **V16.5** Safe Error Handling. | Includes `crypto_verification_fail`, `authn_mfa_*`, `tamper_logging_disabled_or_cleared`, and `sys_logging_heartbeat`. |
-| **OWASP Top 10 — A09: Security Logging and Monitoring Failures** | Prevents blind spots where breaches go undetected due to missing audit events, unmonitored logs, or local-only storage. | Closes the loop from vendor code -> CI schema gate -> Day-1 SOC SIEM detections. |
+| **OWASP ASVS v5.0 (Chapter V16)** | **V16.3** Centralised Security Logging (authn, factor metadata, crypto/TLS/signature/authz failures); **V16.4** Log Protection & Integrity; **V16.5** Safe Error Handling. | Includes `crypto_verification_fail`, `authn_mfa_*`, `tamper_logging_disabled_or_cleared`, and `sys_logging_heartbeat`. |
+| **OWASP Top 10 (A09: Security Logging and Monitoring Failures)** | Prevents blind spots where breaches go undetected due to missing audit events, unmonitored logs, or local-only storage. | Closes the loop from vendor code -> CI schema gate -> Day-1 SOC SIEM detections. |
 
 ---
 
@@ -52,5 +52,5 @@ When preparing a System Security Plan (SSP) or IRAP evidence pack:
 
 1. Attach your application's generated **SOC Handoff Pack** (`scripts/generate_soc_handoff.py`).
 2. Attach the latest CI pass report from `scripts/validate_logs.py --strict` and `scripts/score_signal_noise.py`.
-3. **Generate signed Sentinel proof of arrival with [Bower](https://github.com/jusso-dev/Bower)** (`bower evidence run`) — Bower sends a canary through the real collector, verifies it inside Microsoft Sentinel with a read-only KQL query, records latency, retention, and Australian region, maps the results to **ACSC ISM & Essential Eight** controls, and signs the evidence bundle (see [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md)).
+3. **Generate signed Sentinel proof of arrival with [Bower](https://github.com/jusso-dev/Bower)** (`bower evidence run`). Bower sends a canary through the real collector, verifies it inside Microsoft Sentinel with a read-only KQL query, records latency, retention, and Australian region, maps the results to **ACSC ISM & Essential Eight** controls, and signs the evidence bundle (see [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md)).
 4. Include a screenshot/export of a synthetic attack test (`scripts/generate_test_events.py --scenario brute-force-takeover`) triggering a SOC alert.

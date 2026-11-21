@@ -6,7 +6,7 @@ Evaluates 5 weighted pillars:
   - Secret, PII & CWE-117 injection safety (30 pts)
   - Noise discipline: zero debug/health/static contamination (20 pts)
   - Payload compactness: P95 event size <= 2048 bytes (10 pts)
-  - Canonical OWASP catalog alignment (10 pts)
+  - Canonical OWASP catalogue alignment (10 pts)
 """
 
 from __future__ import annotations
@@ -81,7 +81,7 @@ def score_file(path: Path) -> Dict[str, Any]:
 
     # Weighted scores
     schema_score = round(30.0 * (1.0 - len(schema_lines) / total), 1)
-    # Any secret/PII or injection leak is heavily penalized
+    # Any secret/PII or injection leak is heavily penalised
     safety_score = 0.0 if safety_lines else 30.0
     noise_score = round(20.0 * (1.0 - len(noise_lines) / total), 1)
 
@@ -127,7 +127,7 @@ def score_file(path: Path) -> Dict[str, Any]:
         )
     if catalog_matches < total:
         recommendations.append(
-            f"Map {total - catalog_matches} event(s) to standardized OWASP event names in schemas/event-catalog.json."
+            f"Map {total - catalog_matches} event(s) to standardised OWASP event names in schemas/event-catalog.json."
         )
     if not recommendations:
         recommendations.append("Excellent SOC readiness: high signal, zero noise, zero leaks, and full schema compliance.")
@@ -158,7 +158,7 @@ def score_file(path: Path) -> Dict[str, Any]:
 def render_markdown(report: Dict[str, Any]) -> str:
     b = report["breakdown"]
     lines = [
-        f"# SOC Signal-to-Noise Scorecard — `{report['file']}`",
+        f"# SOC Signal-to-Noise Scorecard: `{report['file']}`",
         "",
         f"**Overall Score:** `{report['score']} / 100` (Grade **{report['grade']}**)",
         "",
@@ -177,7 +177,7 @@ def render_markdown(report: Dict[str, Any]) -> str:
         f"| Secret, PII & CWE-117 Safety | {b.get('safety_redaction_30', 0)} | 30 |",
         f"| Noise Discipline (Zero Debug/Health/Static) | {b.get('noise_discipline_20', 0)} | 20 |",
         f"| Payload Compactness (<= 2 KB P95) | {b.get('payload_compactness_10', 0)} | 10 |",
-        f"| OWASP Catalog Alignment | {b.get('catalog_alignment_10', 0)} | 10 |",
+        f"| OWASP Catalogue Alignment | {b.get('catalog_alignment_10', 0)} | 10 |",
         "",
         "## Recommendations",
         "",
@@ -207,11 +207,11 @@ def main(argv: List[str] | None = None) -> int:
         print(render_markdown(report))
     else:
         b = report["breakdown"]
-        print(f"Signal-to-Noise Score: {report['score']}/100 (Grade {report['grade']}) — {report['file']}")
+        print(f"Signal-to-Noise Score: {report['score']}/100 (Grade {report['grade']}) | {report['file']}")
         print(
             f"  Schema: {b.get('schema_compliance_30', 0)}/30 | Safety: {b.get('safety_redaction_30', 0)}/30 | "
             f"Noise: {b.get('noise_discipline_20', 0)}/20 | Size: {b.get('payload_compactness_10', 0)}/10 | "
-            f"Catalog: {b.get('catalog_alignment_10', 0)}/10"
+            f"Catalogue: {b.get('catalog_alignment_10', 0)}/10"
         )
         print(
             f"  Records: {report['total_records']} | Avg: {report['avg_bytes']} B | "

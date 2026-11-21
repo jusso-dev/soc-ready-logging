@@ -1,6 +1,6 @@
 ---
 name: soc-handoff-pack
-description: Generate a Day-1 Government SOC Handoff Pack, implemented Event Catalog, golden sample NDJSON, and tailored starter SIEM detections (Microsoft Sentinel KQL, Sigma, Splunk SPL) directly from a vendor codebase.
+description: Generate a Day-1 Government SOC Handoff Pack, implemented Event Catalogue, golden sample NDJSON, and tailored starter SIEM detections (Microsoft Sentinel KQL, Sigma, Splunk SPL) directly from a vendor codebase.
 ---
 
 # Day-1 Government SOC Handoff Pack Generator
