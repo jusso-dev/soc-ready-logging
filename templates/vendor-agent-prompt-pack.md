@@ -15,12 +15,12 @@ Audit this repository's logging against OWASP Logging Cheat Sheet, OWASP ASVS V1
 Output a prioritized remediation table with exact file paths and line numbers.
 ```
 
-## Prompt 2 — Implement Two-Stream SOC-Ready Security Logger
+## Prompt 2 — Implement Two-Stream SOC-Ready Security Logger (+ Bower Integration)
 ```text
-Implement a lightweight, zero-bloat SecurityLogger wrapper in this repo following the canonical schema in `soc-ready-logging/schemas/security-event.schema.json`:
+Implement a lightweight, zero-bloat SecurityLogger wrapper in this repo following the canonical schema in `soc-ready-logging/schemas/security-event.schema.json` (and compatible with our open-source security log normaliser & Australian privacy gateway `jusso-dev/Bower`):
 - Enforce two-stream separation: emit `stream: "security"` single-line JSON (NDJSON) for SOC SIEM events, keeping debug/health/perf logs on the operational logger.
 - Require fields: schema_version ("1.0.0"), timestamp (UTC ISO-8601 Z), stream ("security"), event (OWASP prefix like authn_login_fail, authz_fail, priv_role_assigned, data_bulk_export, crypto_verification_fail, sys_logging_heartbeat), severity (INFO|WARN|HIGH|CRITICAL), outcome (success|failure|blocked|unknown), app, actor, source (true client IP from trusted proxy), correlation_id, and concise message.
-- Automatically redact sensitive keys (password, secret, token, authorization, cookie, api_key, tfn, medicare, credit_card) and scrub JWT/Bearer/PEM regex patterns.
+- Automatically redact sensitive keys (password, secret, token, authorization, cookie, api_key, tfn, medicare, credit_card) and scrub JWT/Bearer/PEM regex patterns (and route through Bower for host-side checksum-validated AU TFN/Medicare/IHI/ABN/CRN redaction, default-deny policy enforcement, and tamper-evident queuing).
 - Strip ASCII control characters (\r, \n, \t, ANSI escapes) to prevent CWE-117 log injection.
 - Wire the wrapper into all P1 security boundaries identified in the audit without adding noisy per-request logging.
 ```

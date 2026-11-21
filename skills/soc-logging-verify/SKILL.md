@@ -32,3 +32,4 @@ Use this skill after implementing security logging (or before any government UAT
      - P95 payload size: `<= 2048` bytes
 
 5. **Wire the gate into CI/CD** (GitHub Actions, Azure DevOps, GitLab CI) so future PRs cannot reintroduce noisy logs, schema drift, or secret leakage.
+6. **Optional live Sentinel proof**: When shipping through **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)**, run `bower evidence run` to verify canary arrival inside Sentinel via a separate read-only identity and generate a signed ACSC ISM / Essential Eight evidence bundle.

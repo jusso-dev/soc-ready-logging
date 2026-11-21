@@ -52,4 +52,5 @@ When preparing a System Security Plan (SSP) or IRAP evidence pack:
 
 1. Attach your application's generated **SOC Handoff Pack** (`scripts/generate_soc_handoff.py`).
 2. Attach the latest CI pass report from `scripts/validate_logs.py --strict` and `scripts/score_signal_noise.py`.
-3. Include a screenshot/export of the live SIEM ingestion table showing `sys_logging_heartbeat` and a synthetic attack test (`scripts/generate_test_events.py --scenario brute-force-takeover`) triggering a SOC alert.
+3. **Generate signed Sentinel proof of arrival with [Bower](https://github.com/jusso-dev/Bower)** (`bower evidence run`) — Bower sends a canary through the real collector, verifies it inside Microsoft Sentinel with a read-only KQL query, records latency, retention, and Australian region, maps the results to **ACSC ISM & Essential Eight** controls, and signs the evidence bundle (see [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md)).
+4. Include a screenshot/export of a synthetic attack test (`scripts/generate_test_events.py --scenario brute-force-takeover`) triggering a SOC alert.

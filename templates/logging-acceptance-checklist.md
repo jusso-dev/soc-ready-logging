@@ -15,7 +15,7 @@ Use this pass/fail checklist for pre-release engineering sign-off and Government
 | 9 | Signal-to-Noise score `>= 90/100` on representative staging/load capture | ACSC Priority Logs | `python3 scripts/score_signal_noise.py <capture.ndjson>` | [ ] |
 | 10 | Out-of-process, write-only SIEM delivery (app cannot alter/delete SIEM logs) | ACSC ISM-1405 / ISM-1815 | Review IAM/RBAC role for app runtime vs. collector | [ ] |
 | 11 | `sys_logging_heartbeat` arriving every 15–60 min + SOC absence alert configured | ACSC ISM-1228 / ASVS V16.4 | Confirm heartbeat event in SIEM + alert rule enabled | [ ] |
-| 12 | Day-1 SOC Handoff Pack + starter detections delivered & smoke-tested | ACSC ISM-0580 / ISM-1228 | Synthetic attack event fires test SOC alert within SLA | [ ] |
+| 12 | Day-1 SOC Handoff Pack + starter detections delivered & smoke-tested (attach signed `bower evidence run` bundle if using [Bower](https://github.com/jusso-dev/Bower)) | ACSC ISM-0580 / ISM-1228 | Synthetic attack event fires test SOC alert within SLA + signed arrival evidence | [ ] |
 
 ---
 

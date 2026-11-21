@@ -23,8 +23,9 @@
 
 - **Format**: Single-line UTF-8 JSON (NDJSON) conforming to `soc-ready-logging` schema `v1.0.0`.
 - **Stream filter**: `stream == "security"` routed to SOC SIEM; `stream == "operational"` routed to APM / operational logs.
-- **Transport mechanism**: `e.g. stdout -> Fluent Bit / Azure Monitor Agent -> Sentinel DCR -> CustomAppSecurity_CL`
-- **Write-only isolation (ACSC ISM-1405 / ISM-1815)**: Application runtime credentials cannot query, modify, or delete ingested SIEM records.
+- **Transport mechanism**: `e.g. Bower Privacy Gateway (jusso-dev/Bower) -> Azure Monitor Logs Ingestion API (DCE/DCR) -> CustomAppSecurity_CL (or AMA spool / S3 / Splunk HEC)`
+- **Host-side privacy & default-deny policy**: `e.g. Bower Privacy & Secret Protection Engine (AU TFN/Medicare/IHI/ABN/CRN + secrets) + signed Pack version vX.Y`
+- **Tamper evidence & write-only isolation (ACSC ISM-1405 / ISM-1815)**: Application runtime credentials cannot query, modify, or delete ingested SIEM records (and Bower maintains a hash-chained SQLite WAL queue ledger).
 - **Time synchronization (ACSC ISM-0988)**: All timestamps emitted in UTC ISO-8601 (`...Z`) from NTP-synced hosts.
 - **Client IP preservation**: True client IP extracted from trusted gateway header (`e.g. X-Azure-ClientIP` / rightmost untrusted `X-Forwarded-For` behind WAF CIDR `x.x.x.x/24`).
 - **Pipeline liveness heartbeat**: `sys_logging_heartbeat` emitted every `15` minutes per production service. Alert if silent > `90` minutes.

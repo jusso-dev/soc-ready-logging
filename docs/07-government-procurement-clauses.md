@@ -32,6 +32,12 @@ Ask bidders these five concrete questions (their answers immediately reveal matu
 
 ---
 
+## Open-Source Reference Gateway for RFPs: [Bower](https://github.com/jusso-dev/Bower)
+
+Government buyers can cite **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([guide](./12-normalising-and-shipping-with-bower.md)) in SOWs as an open-source reference normaliser and Australian privacy gateway—so vendors do not charge bespoke engineering fees to build host-side TFN/Medicare/IHI redaction, default-deny noise filtering, tamper-evident queuing, legacy SQL Server/WEC adapters, or signed Sentinel arrival proof (`bower evidence run`).
+
+---
+
 ## Acceptance Gate Checklist
 
 Use [`templates/logging-acceptance-checklist.md`](../templates/logging-acceptance-checklist.md) as a formal UAT / Go-Live sign-off sheet signed jointly by the **Vendor Tech Lead** and the **Agency SOC / Security Lead**.

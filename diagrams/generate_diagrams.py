@@ -151,8 +151,8 @@ def build_two_stream() -> None:
             sec_log = SecuritySettings("SecurityLogger Wrapper\nstream='security'\nRedact & CWE-117 Safe")
             ops_log = AzLogs("Operational Logger\nDEBUG, /healthz,\nLatency & Traces")
 
-        with Cluster("2. Normaliser & Privacy Gateway", graph_attr=cluster_style("#eff6ff", "#93c5fd", "#1e3a8a")):
-            router = FluentBit("Bower (Recommended)\nor Fluent Bit / OTel\nDefault-Deny | AU Redact")
+        with Cluster("2. Bower Privacy Gateway & Normaliser", graph_attr=cluster_style("#eff6ff", "#60a5fa", "#1e3a8a")):
+            router = FluentBit("jusso-dev/Bower\nDefault-Deny | AU Redact\nTamper Ledger | Prove")
 
         with Cluster("3A. Government SOC SIEM (ISM-1405 / ISM-1988)", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
             siems = [
@@ -195,9 +195,9 @@ def build_signal_vs_noise() -> None:
         with Cluster("Diverted to APM / Ops (~90–95% Volume)", graph_attr=cluster_style("#fef2f2", "#fca5a5", "#991b1b")):
             dropped = Grafana("Never Send to SIEM\n/healthz, .js/.css, DEBUG,\nPer-Request Valid JWTs")
 
-        with Cluster("Security Stream Pipeline (stream='security')", graph_attr=cluster_style("#eff6ff", "#93c5fd", "#1e3a8a")):
-            candidates = FluentBit("5–10% Security Events\nAuthn, MFA, Authz 403,\nPrivs, Exports & Config")
-            hygiene = SecuritySettings("Hygiene & Flood Gate\nRedact Secrets/PII\nCWE-117 Safe | Dedupe")
+        with Cluster("Bower Security Stream Pipeline (stream='security')", graph_attr=cluster_style("#eff6ff", "#60a5fa", "#1e3a8a")):
+            candidates = FluentBit("Bower Default-Deny Pack\n5–10% Security Events\nAuthn, Authz, Privs, Data")
+            hygiene = SecuritySettings("Bower AU Privacy Engine\nTFN/Medicare/Secrets\nCWE-117 Safe | Dedupe")
 
         with Cluster("High-Value SOC Signal (1–3% Volume)", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
             siem = AzureSentinel("SIEM-Ready NDJSON\nScore >= 90/100\nP95 < 2 KB | 0 Leaks")
@@ -233,9 +233,9 @@ def build_vendor_lifecycle() -> None:
         with Cluster("Automated CI Quality Gate", graph_attr=cluster_style("#fefce8", "#fcd34d", "#854d0e")):
             step4 = GithubActions("4. Verify in CI\nvalidate_logs.py --strict\nScore >= 90/100")
 
-        with Cluster("Government SOC Onboarding", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
-            step5 = FluentBit("5. SOC Handoff Pack\ngenerate_soc_handoff.py\nCatalog + KQL/Sigma")
-            step6 = Alerting("6. UAT Purple Test\ngenerate_test_events.py\nAlerts + Heartbeat OK")
+        with Cluster("Bower Delivery & Government SOC Onboarding", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
+            step5 = FluentBit("5. Ship via Bower\njusso-dev/Bower\nHandoff Pack + KQL")
+            step6 = Alerting("6. Prove Arrival\nbower evidence run\nSigned ISM / E8 Bundle")
 
         step1 >> fed_edge() >> step2 >> fed_edge() >> step3 >> fed_edge() >> step4 >> sec_edge() >> step5 >> sec_edge() >> step6
 
@@ -262,8 +262,8 @@ def build_azure_diagram() -> None:
             funcs = FunctionApps("Azure Functions")
             mi = EntraManagedIdentities("Managed Identity\nMonitoring Metrics\nPublisher (Write-Only)")
 
-        with Cluster("Azure Monitor Ingestion & Pre-Billing Filter", graph_attr=cluster_style("#eff6ff", "#60a5fa", "#1e3a8a")):
-            priv = PrivateEndpoint("Private Link\n(AMPLS / DCE)")
+        with Cluster("Bower + Azure Monitor Ingestion & Pre-Billing Filter", graph_attr=cluster_style("#eff6ff", "#60a5fa", "#1e3a8a")):
+            priv = PrivateEndpoint("Bower Collector +\nPrivate Link\n(AMPLS / DCE)")
             dcr = Monitor("Data Collection Rule\nKQL: where stream\n== 'security'")
 
         with Cluster("Agency SOC Security Subscription (ISM-1405 / ISM-1815 / ISM-1988)", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
@@ -396,11 +396,11 @@ def build_cross_cloud_federation() -> None:
     ):
         with Cluster("AWS Source (Filtered stream='security')", graph_attr=cluster_style("#fff7ed", "#fdba74", "#9a3412")):
             aws_fh = KinesisDataFirehose("AWS Firehose")
-            aws_s3_sqs = SQS("S3 + SQS\n(IAM Role OIDC)")
+            aws_s3_sqs = SQS("S3 + SQS\n(Bower bower-cloud\nIAM Role OIDC)")
 
         with Cluster("GCP Source (Filtered stream='security')", graph_attr=cluster_style("#eff6ff", "#93c5fd", "#1e40af")):
             gcp_sink = GcpLogging("Cloud Logging Sink")
-            gcp_ps = PubSub("Pub/Sub\n(Workload Identity)")
+            gcp_ps = PubSub("Pub/Sub\n(Bower bower-cloud\nWorkload Identity)")
 
         with Cluster("Azure Source (Filtered stream='security')", graph_attr=cluster_style("#f0f9ff", "#38bdf8", "#0c4a6e")):
             az_dcr = Monitor("Azure Monitor DCR")

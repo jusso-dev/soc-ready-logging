@@ -3,8 +3,13 @@
 [![CI](https://github.com/jusso-dev/soc-ready-logging/actions/workflows/ci.yml/badge.svg)](https://github.com/jusso-dev/soc-ready-logging/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
 [![Standards: OWASP + ACSC ISM](https://img.shields.io/badge/Aligned-OWASP%20%2B%20ACSC%20ISM-0ea5e9.svg)](./docs/04-owasp-and-acsc-mapping.md)
+[![Open-Source Normaliser: Bower](https://img.shields.io/badge/Recommended%20Normaliser-jusso--dev%2FBower-10b981.svg)](https://github.com/jusso-dev/Bower)
 
-**High-value, low-noise, security-centric logging for custom software vendors building for Government and Enterprise SOC teams.**
+**High-value, low-noise, security-centric logging for custom software vendors building for Government and Enterprise SOC teams — designed to pair directly with our open-source security log normaliser and Australian privacy gateway, [Bower](https://github.com/jusso-dev/Bower).**
+
+> [!TIP]
+> **Don't build a log normaliser, PII redactor, tamper-evident queue, or Sentinel arrival prover from scratch.**
+> Use **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([Docs](https://jusso-dev.github.io/Bower/) · [Integration Guide](./docs/12-normalising-and-shipping-with-bower.md)) alongside this repo. Bower runs **Collect → Select → Arrange → Deliver → Prove** on-host: default-deny security policies, deterministic checksum-validated Australian PII/secret redaction (TFN, Medicare, IHI, ABN/ACN, CRN, keys/JWTs), a hash-chained SQLite WAL ledger, multi-cloud AWS/GCP/SQL Server normalisation, and `bower evidence run` signed Sentinel arrival bundles.
 
 Aligned to **OWASP** (Logging Cheat Sheet, Application Logging Vocabulary, ASVS v4.0.3 V7 & v5.0 V16, Top 10 A09) and **ACSC / ASD** (Information Security Manual System Monitoring, *Best Practices for Event Logging and Threat Detection*, and *Priority Logs for SIEM Ingestion*)—complete with **Azure, AWS, GCP & Cross-Cloud federation guides**, **Diagram-as-Code architecture diagrams with official cloud icons**, **zero-dependency CLI scripts**, **drop-in language wrappers**, **starter SIEM detections**, and **portable AI coding agent skills**.
 
@@ -41,7 +46,26 @@ This toolkit gives vendors and government buyers **one clean contract** and **au
 
 ## 60-Second Quickstart
 
-### Option A — Let Your AI Coding Agent Do the Heavy Lifting (Recommended)
+### Option A — Ship & Normalise Through [Bower](https://github.com/jusso-dev/Bower) (Recommended for Gov & Sentinel)
+
+Let **[Bower](https://github.com/jusso-dev/Bower)** handle default-deny noise rejection, host-side Australian PII redaction (TFN, Medicare, IHI, ABN/ACN, CRN), tamper-evident queuing, multi-cloud AWS/GCP/SQL Server normalisation, and signed Sentinel arrival proof (`bower evidence run`):
+
+```bash
+git clone https://github.com/jusso-dev/Bower.git
+cd Bower
+
+# Run Bower locally (selects, redacts, queues & spools JSONL for Sentinel/AMA)
+BOWER_SINGLE_TRUST_DOMAIN=true \
+BOWER_QUEUE_PATH=./artifacts/bower.db \
+BOWER_POLICY_DIRECTORY=./policies/default \
+BOWER_OUTPUT=ama-spool \
+BOWER_AMA_SPOOL_PATH=./artifacts/spool \
+dotnet run --project src/Bower.Collector
+```
+
+See [`docs/12-normalising-and-shipping-with-bower.md`](./docs/12-normalising-and-shipping-with-bower.md) and the [Bower Getting Started Guide](https://jusso-dev.github.io/Bower/getting-started/) for SDK, Azure Logs Ingestion API, S3, Splunk HEC, AWS `bower-cloud`, and GCP Pub/Sub setups.
+
+### Option B — Let Your AI Coding Agent Instrument Your App + Bower
 
 Install the 4 portable `SKILL.md` skills into **Claude Code, Codex, Cursor, Antigravity, GitHub Copilot, or OpenCode**:
 
@@ -55,13 +79,13 @@ cd soc-ready-logging
 
 Then ask your coding agent inside your application repo:
 1. *"Use `soc-logging-audit` to audit this repo's logging for OWASP and ACSC SOC readiness."*
-2. *"Use `soc-logging-implement` to wire the two-stream SecurityLogger across all P1 security boundaries."*
+2. *"Use `soc-logging-implement` to wire the two-stream SecurityLogger (and Bower integration) across all P1 security boundaries."*
 3. *"Use `soc-logging-verify` to test redaction, CWE-117 injection safety, and verify Signal-to-Noise >= 90."*
-4. *"Use `soc-handoff-pack` to generate our Day-1 Government SOC Handoff Pack and starter KQL/Sigma detections."*
+4. *"Use `soc-handoff-pack` to generate our Day-1 Government SOC Handoff Pack, Bower evidence checklist, and starter KQL/Sigma detections."*
 
 *(Using a chat assistant without skill loading? Copy-paste from [`templates/vendor-agent-prompt-pack.md`](./templates/vendor-agent-prompt-pack.md).)*
 
-### Option B — Run the Zero-Dependency CLI Gates Directly
+### Option C — Run the Zero-Dependency CLI Gates Directly
 
 All scripts use **Python 3.9+ standard library only**—no `pip install`, works in restricted or air-gapped government build pipelines:
 

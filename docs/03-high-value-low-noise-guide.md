@@ -59,6 +59,8 @@ Even legitimate security events can become noisy during an attack or misconfigur
 2. **Windowed suppression for floods**: For `api_rate_limit_exceeded`, emit one event per `(actor_or_ip, route, window)` with `details.suppressed_count` rather than 50,000 events during a 60-second credential stuffing burst.
 3. **Never sample away `P1` events**: Never apply random probabilistic sampling (e.g., "keep 10%") to `stream: "security"`. Control volume by **choosing the right events** and **summarizing floods**, not by randomly dropping an attacker's privilege escalation event!
 
+> **Want this enforced automatically with default-deny?** Deploy **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([guide](./12-normalising-and-shipping-with-bower.md)). Bower's versioned, signed policies reject any unapproved noisy event before persistence, run built-in per-key flood suppression with summary events, and scrub Australian PII/secrets before data ever leaves the host.
+
 ---
 
 ## Automated Noise Budgeting in CI
