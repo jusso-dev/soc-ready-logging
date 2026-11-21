@@ -1,0 +1,91 @@
+# OpenTelemetry Collector — Two-Stream Security vs. Operational Router
+# Routes `stream == "security"` events to Bower (recommended) or a SIEM endpoint
+# with persistent disk buffering, while diverting operational/debug logs to APM.
+
+extensions:
+  file_storage/security_queue:
+    directory: /var/lib/otelcol/security-queue
+    timeout: 10s
+    compaction:
+      on_start: true
+
+receivers:
+  filelog/app_stdout:
+    include:
+      - /var/log/pods/*/*/*.log
+    operators:
+      - type: json_parser
+        parse_from: body
+        timestamp:
+          parse_from: attributes.timestamp
+          layout: "%Y-%m-%dT%H:%M:%S.%LZ"
+
+processors:
+  memory_limiter:
+    check_interval: 2s
+    limit_mib: 512
+
+  # Keep ONLY schema-marked security events on the SIEM pipeline
+  filter/security_only:
+    error_mode: ignore
+    logs:
+      log_record:
+        - 'attributes["stream"] != "security"'
+        - 'attributes["severity"] == "DEBUG"'
+        - 'attributes["severity"] == "TRACE"'
+
+  # Keep operational logs out of the security pipeline
+  filter/operational_only:
+    error_mode: ignore
+    logs:
+      log_record:
+        - 'attributes["stream"] == "security"'
+
+  # Secondary redaction safety net (primary redaction runs in app wrapper / Bower)
+  transform/secondary_redact:
+    error_mode: ignore
+    log_statements:
+      - context: log
+        statements:
+          - replace_pattern(body, "Bearer\\s+[A-Za-z0-9\\-._~+/]+=*", "[REDACTED]")
+          - replace_pattern(body, "eyJ[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}\\.[A-Za-z0-9_-]{10,}", "[REDACTED]")
+
+  batch/security:
+    timeout: 5s
+    send_batch_size: 200
+
+  batch/operational:
+    timeout: 15s
+    send_batch_size: 1000
+
+exporters:
+  # Recommended: ship to self-hosted jusso-dev/Bower collector for AU PII redaction,
+  # default-deny signed policy enforcement, tamper-evident queue, and Sentinel proof.
+  otlphttp/bower_or_siem:
+    endpoint: "${env:BOWER_OR_SIEM_ENDPOINT}"
+    headers:
+      Authorization: "Bearer ${env:BOWER_INGEST_TOKEN}"
+    sending_queue:
+      enabled: true
+      storage: file_storage/security_queue
+      queue_size: 5000
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 60s
+      max_elapsed_time: 0s # Retry indefinitely until disk queue drains
+
+  otlphttp/apm_ops:
+    endpoint: "${env:APM_OPS_ENDPOINT}"
+
+service:
+  extensions: [file_storage/security_queue]
+  pipelines:
+    logs/security:
+      receivers: [filelog/app_stdout]
+      processors: [memory_limiter, filter/security_only, transform/secondary_redact, batch/security]
+      exporters: [otlphttp/bower_or_siem]
+    logs/operational:
+      receivers: [filelog/app_stdout]
+      processors: [memory_limiter, filter/operational_only, batch/operational]
+      exporters: [otlphttp/apm_ops]

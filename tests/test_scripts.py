@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 import tempfile
@@ -218,6 +219,7 @@ class TestDiagramsAndCloudDocs(unittest.TestCase):
     def test_cloud_and_cross_cloud_docs_exist(self) -> None:
         docs_dir = REPO_ROOT / "docs"
         for doc in (
+            "README.md",
             "08-azure-logging-guide.md",
             "09-aws-logging-guide.md",
             "10-gcp-logging-guide.md",
@@ -225,6 +227,59 @@ class TestDiagramsAndCloudDocs(unittest.TestCase):
             "12-normalising-and-shipping-with-bower.md",
         ):
             self.assertTrue((docs_dir / doc).exists(), f"Missing cloud guide: {doc}")
+        self.assertTrue((REPO_ROOT / "SECURITY.md").exists())
+
+    def test_collectors_detections_and_java_example(self) -> None:
+        dcr_path = REPO_ROOT / "collectors" / "azure-dcr" / "custom-app-security-dcr.json"
+        dcr = json.loads(dcr_path.read_text(encoding="utf-8"))
+        self.assertIn("resources", dcr)
+        for rel in (
+            "collectors/README.md",
+            "collectors/otel-collector/security-two-stream.yaml",
+            "collectors/fluent-bit/two-stream-router.conf",
+            "collectors/aws-cloudwatch/subscription-filter.tf",
+            "collectors/gcp-logging/sink-and-locked-bucket.tf",
+            "detections/chronicle-yaral/soc-starter-detections.yaral",
+            "examples/java/SecurityAuditLogger.java",
+        ):
+            self.assertTrue((REPO_ROOT / rel).exists(), f"Missing asset: {rel}")
+
+    def test_contextual_au_pii_values_flagged(self) -> None:
+        sample = {
+            "schema_version": "1.0.0",
+            "timestamp": "2026-11-21T06:10:01.120Z",
+            "stream": "security",
+            "event": "user_updated",
+            "severity": "INFO",
+            "outcome": "success",
+            "app": {"id": "gov-portal", "name": "Portal", "environment": "prod", "version": "1.0.0"},
+            "actor": {"type": "user", "id": "usr-1"},
+            "source": {"ip": "203.0.113.4"},
+            "correlation_id": "trace-12345678",
+            "message": "Updated profile TFN 123 456 789 and Medicare 2123 45678 1",
+        }
+        errs, _ = validate_logs.validate_record(sample, 1, validate_logs.load_catalog_events(), strict=True)
+        msgs = " ".join(e["message"] for e in errs)
+        self.assertIn("au_tfn_contextual", msgs)
+        self.assertIn("au_medicare_contextual", msgs)
+
+    def test_no_broken_relative_markdown_links(self) -> None:
+        broken = []
+        for md in REPO_ROOT.rglob("*.md"):
+            if ".git" in md.parts:
+                continue
+            text = md.read_text(encoding="utf-8")
+            for match in re.finditer(r"\[[^\]]+\]\(([^)]+)\)", text):
+                target = match.group(1)
+                if target.startswith(("http://", "https://", "#", "mailto:")):
+                    continue
+                clean = target.split("#")[0]
+                if not clean:
+                    continue
+                resolved = (md.parent / clean).resolve()
+                if not resolved.exists():
+                    broken.append((str(md.relative_to(REPO_ROOT)), target))
+        self.assertEqual(broken, [], f"Broken relative Markdown links: {broken}")
 
 
 if __name__ == "__main__":

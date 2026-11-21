@@ -73,6 +73,8 @@ SECRET_VALUE_CHECKS: List[Tuple[str, re.Pattern[str]]] = [
     ("inline_secret_assignment", re.compile(r"\b(password|passwd|pwd|api_key|secret)\s*[:=]\s*(?!\[REDACTED\])\S+", re.IGNORECASE)),
     ("aws_access_key", re.compile(r"\b(AKIA|ASIA)[0-9A-Z]{16}\b")),
     ("github_token", re.compile(r"\bgh[pousr]_[A-Za-z0-9]{20,}\b")),
+    ("au_tfn_contextual", re.compile(r"\b(tfn|tax[\s_-]*file[\s_-]*(number|no)?)\b\s*[:=#-]?\s*(?!\[REDACTED\])(\d[\s-]?){8,9}\b", re.IGNORECASE)),
+    ("au_medicare_contextual", re.compile(r"\bmedicare(\s*(number|no|card))?\b\s*[:=#-]?\s*(?!\[REDACTED\])[2-6]\d{3}[\s-]?\d{5}[\s-]?\d\b", re.IGNORECASE)),
     ("credit_card_like", re.compile(r"\b(?:\d[ -]*?){13,16}\b")),
 ]
 
@@ -253,7 +255,8 @@ def validate_record(
                     digits = re.sub(r"\D", "", text)
                     if not (13 <= len(digits) <= 16 and text.replace(" ", "").replace("-", "").isdigit()):
                         continue
-                add_err("secret_or_pii_leak", f"Potential {secret_kind} detected in '{field_path}'")
+                hint = " (consider jusso-dev/Bower for host-side AU PII protection)" if secret_kind.startswith("au_") else ""
+                add_err("secret_or_pii_leak", f"Potential {secret_kind} detected in '{field_path}'{hint}")
         if field_path in ("message", "http.route", "target.name"):
             for noise_kind, nregex in NOISE_PATTERNS:
                 if noise_kind == "debug_level" and field_path != "message":

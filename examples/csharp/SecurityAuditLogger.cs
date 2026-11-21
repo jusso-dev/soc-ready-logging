@@ -150,6 +150,25 @@ public sealed class SecurityAuditLogger
         return line;
     }
 
+    public string EmitHeartbeat(int intervalSeconds = 900, long droppedEvents = 0)
+    {
+        var count = System.Threading.Interlocked.Exchange(ref _emittedSinceHeartbeat, 0);
+        return Emit(
+            eventName: "sys_logging_heartbeat",
+            severity: "INFO",
+            outcome: "success",
+            actor: new SecurityActor("system", "system:audit-heartbeat"),
+            source: new SecuritySource("127.0.0.1"),
+            message: "Security logging pipeline heartbeat OK",
+            category: "system",
+            details: new Dictionary<string, object?>
+            {
+                ["interval_seconds"] = intervalSeconds,
+                ["events_emitted_since_last"] = count,
+                ["dropped_events"] = droppedEvents
+            });
+    }
+
     private static Dictionary<string, object?> RedactDictionary(IReadOnlyDictionary<string, object?> input)
     {
         var output = new Dictionary<string, object?>();

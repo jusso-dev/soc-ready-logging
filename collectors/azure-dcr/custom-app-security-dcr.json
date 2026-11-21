@@ -1,0 +1,82 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "metadata": {
+    "description": "Azure Monitor Data Collection Rule (DCR) for soc-ready-logging canonical v1.0.0 events -> Microsoft Sentinel CustomAppSecurity_CL. Filters stream == 'security' BEFORE Log Analytics / Sentinel billing. Pairs seamlessly with jusso-dev/Bower."
+  },
+  "parameters": {
+    "dcrName": {
+      "type": "string",
+      "defaultValue": "dcr-soc-ready-custom-app-security"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "australiaeast",
+      "allowedValues": ["australiaeast", "australiasoutheast", "australiacentral", "australiacentral2"]
+    },
+    "dataCollectionEndpointId": {
+      "type": "string",
+      "metadata": { "description": "Resource ID of the regional Data Collection Endpoint (DCE)." }
+    },
+    "workspaceResourceId": {
+      "type": "string",
+      "metadata": { "description": "Resource ID of the Microsoft Sentinel Log Analytics Workspace." }
+    }
+  },
+  "resources": [
+    {
+      "type": "Microsoft.Insights/dataCollectionRules",
+      "apiVersion": "2023-03-11",
+      "name": "[parameters('dcrName')]",
+      "location": "[parameters('location')]",
+      "properties": {
+        "dataCollectionEndpointId": "[parameters('dataCollectionEndpointId')]",
+        "streamDeclarations": {
+          "Custom-SocReadySecurityEvents": {
+            "columns": [
+              { "name": "schema_version", "type": "string" },
+              { "name": "timestamp", "type": "string" },
+              { "name": "stream", "type": "string" },
+              { "name": "event", "type": "string" },
+              { "name": "category", "type": "string" },
+              { "name": "severity", "type": "string" },
+              { "name": "outcome", "type": "string" },
+              { "name": "app", "type": "dynamic" },
+              { "name": "actor", "type": "dynamic" },
+              { "name": "source_info", "type": "dynamic" },
+              { "name": "target", "type": "dynamic" },
+              { "name": "http", "type": "dynamic" },
+              { "name": "correlation_id", "type": "string" },
+              { "name": "reason", "type": "string" },
+              { "name": "message", "type": "string" },
+              { "name": "details", "type": "dynamic" },
+              { "name": "compliance", "type": "dynamic" }
+            ]
+          }
+        },
+        "destinations": {
+          "logAnalytics": [
+            {
+              "workspaceResourceId": "[parameters('workspaceResourceId')]",
+              "name": "sentinel-workspace"
+            }
+          ]
+        },
+        "dataFlows": [
+          {
+            "streams": ["Custom-SocReadySecurityEvents"],
+            "destinations": ["sentinel-workspace"],
+            "transformKql": "source | where stream == 'security' | where severity in ('INFO', 'WARN', 'HIGH', 'CRITICAL') | where not(message has_any ('/healthz', '/readyz', '/livez', '/metrics')) | extend TimeGenerated = todatetime(timestamp) | project TimeGenerated, schema_version, stream, event, category, severity, outcome, app, actor, SourceInfo = source_info, target, http, correlation_id, reason, message, details, compliance",
+            "outputStream": "Custom-CustomAppSecurity_CL"
+          }
+        ]
+      }
+    }
+  ],
+  "outputs": {
+    "dcrImmutableId": {
+      "type": "string",
+      "value": "[reference(resourceId('Microsoft.Insights/dataCollectionRules', parameters('dcrName'))).immutableId]"
+    }
+  }
+}

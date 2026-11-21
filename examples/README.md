@@ -14,5 +14,8 @@ These minimal, zero-external-dependency wrappers implement the canonical [`schem
 | Python | [`python/security_logger.py`](./python/security_logger.py) | Python 3.9+ standard library only |
 | C# / .NET | [`csharp/SecurityAuditLogger.cs`](./csharp/SecurityAuditLogger.cs) | .NET 8/9/10 (`System.Text.Json`) |
 | Go | [`go/security_logger.go`](./go/security_logger.go) | Go 1.21+ standard library only |
+| Java | [`java/SecurityAuditLogger.java`](./java/SecurityAuditLogger.java) | Java 17+ standard library only |
+
+All 5 wrappers include `emitHeartbeat` / `EmitHeartbeat` parity for pipeline liveness monitoring. For host-side Australian PII checksum validation (TFN, Medicare, IHI, ABN/ACN, CRN), default-deny policies, and tamper-evident queuing, pair your wrapper with **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([guide](../docs/12-normalising-and-shipping-with-bower.md)).
 
 Copy the file that matches your stack into your application's `src/security/` folder (or let the `soc-logging-implement` agent skill adapt it directly to your framework).

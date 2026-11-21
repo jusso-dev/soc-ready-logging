@@ -169,3 +169,22 @@ func (l *SecurityLogger) Emit(in EventInput) (string, error) {
 	_, err = fmt.Fprintln(l.out, line)
 	return line, err
 }
+
+func (l *SecurityLogger) EmitHeartbeat(intervalSeconds int, droppedEvents int64) (string, error) {
+	count := l.counter.Swap(0)
+	return l.Emit(EventInput{
+		Event:         "sys_logging_heartbeat",
+		Category:      "system",
+		Severity:      "INFO",
+		Outcome:       "success",
+		Actor:         Actor{Type: "system", ID: "system:audit-heartbeat"},
+		Source:        Source{IP: "127.0.0.1"},
+		CorrelationID: fmt.Sprintf("hb-%s", time.Now().UTC().Format("20060102T150405Z")),
+		Message:       "Security logging pipeline heartbeat OK",
+		Details: map[string]any{
+			"interval_seconds":          intervalSeconds,
+			"events_emitted_since_last": count,
+			"dropped_events":            droppedEvents,
+		},
+	})
+}

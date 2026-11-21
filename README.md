@@ -137,10 +137,11 @@ Vendor hosting and agency SOC SIEMs frequently span different clouds. Dedicated 
 | [`schemas/`](./schemas/) | Strict Draft 2020-12 [`security-event.schema.json`](./schemas/security-event.schema.json), 32-event machine-readable [`event-catalog.json`](./schemas/event-catalog.json) (mapped to MITRE ATT&CK, OWASP ASVS, and ACSC ISM), plus golden & anti-pattern NDJSON fixtures. |
 | [`skills/`](./skills/) | 4 portable Agent Skills (`soc-logging-audit`, `soc-logging-implement`, `soc-logging-verify`, `soc-handoff-pack`) with progressive-disclosure reference sheets. |
 | [`scripts/`](./scripts/) | Zero-dependency Python 3 validation, signal-to-noise scoring, static repo auditing, synthetic attack generation, SOC handoff generation, and Bash skill installer. |
-| [`examples/`](./examples/) | Drop-in, zero-bloat `SecurityLogger` reference wrappers in **TypeScript**, **Python**, **C# / .NET**, and **Go**. |
-| [`detections/`](./detections/) | Day-1 starter SOC detection rules in **Sigma**, **Microsoft Sentinel KQL**, and **Splunk SPL**. |
+| [`examples/`](./examples/) | Drop-in, zero-bloat `SecurityLogger` reference wrappers in **TypeScript**, **Python**, **C# / .NET**, **Go**, and **Java** (all with `emitHeartbeat` parity). |
+| [`collectors/`](./collectors/) | Drop-in starter configs for **OpenTelemetry Collector**, **Fluent Bit / ECS FireLens**, **Azure Monitor DCR (ARM)**, **AWS CloudWatch/Firehose/S3 WORM (Terraform)**, and **GCP Logging Sink + Locked Bucket (Terraform)**. |
+| [`detections/`](./detections/) | Day-1 starter SOC detection rules in **Sigma**, **Microsoft Sentinel KQL**, **Splunk SPL**, and **Google SecOps (Chronicle) YARA-L**. |
 | [`diagrams/`](./diagrams/) | Diagram-as-Code [`generate_diagrams.py`](./diagrams/generate_diagrams.py) (Python `diagrams`, consistent `Helvetica` font, official Azure/AWS/GCP icons) + all 8 rendered PNG diagrams. |
-| [`templates/`](./templates/) | Fill-in-the-blank [SOC Handoff Pack](./templates/soc-handoff-pack.md), [UAT/ATO Acceptance Checklist](./templates/logging-acceptance-checklist.md), and [Vendor AI Prompt Pack](./templates/vendor-agent-prompt-pack.md). |
+| [`templates/`](./templates/) | Fill-in-the-blank [SOC Handoff Pack](./templates/soc-handoff-pack.md), [UAT/ATO Acceptance Checklist](./templates/logging-acceptance-checklist.md), [Vendor AI Prompt Pack](./templates/vendor-agent-prompt-pack.md), plus [`SECURITY.md`](./SECURITY.md). |
 
 ---
 

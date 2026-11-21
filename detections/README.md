@@ -9,6 +9,7 @@ Because every vendor adopting `soc-ready-logging` emits the exact same canonical
 | **Sigma** (vendor-neutral) | [`sigma/`](./sigma/) | Convert to any SIEM via `sigma-cli` |
 | **Microsoft Sentinel KQL** | [`sentinel-kql/soc-starter-detections.kql`](./sentinel-kql/soc-starter-detections.kql) | Microsoft Sentinel / Azure Log Analytics (common in AU Gov) |
 | **Splunk SPL** | [`splunk-spl/soc-starter-detections.spl`](./splunk-spl/soc-starter-detections.spl) | Splunk Enterprise Security |
+| **Google SecOps YARA-L** | [`chronicle-yaral/soc-starter-detections.yaral`](./chronicle-yaral/soc-starter-detections.yaral) | Google Security Operations (Chronicle SIEM / UDM) |
 
 ## Day-1 Detections Covered
 

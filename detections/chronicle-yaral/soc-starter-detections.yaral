@@ -1,0 +1,117 @@
+/*
+ * Google Security Operations (Chronicle SIEM) — Starter YARA-L 2.0 Rules
+ * Targets canonical `soc-ready-logging` v1.0.0 events mapped into UDM.
+ */
+
+rule custom_app_brute_force_then_success {
+  meta:
+    author = "jusso-dev/soc-ready-logging"
+    description = "Detects successful authentication following repeated failures in a custom application (MITRE T1110, T1078)"
+    severity = "High"
+    mitre_attack = "T1110, T1078"
+    ism_controls = "ISM-0585, ISM-1228"
+
+  events:
+    $e.metadata.product_event_type = "authn_login_success_after_fail"
+    $e.security_result.action = "ALLOW"
+    $e.target.application != ""
+
+  outcome:
+    $risk_score = 75
+    $app_id = $e.target.application
+    $actor_id = $e.principal.user.userid
+    $src_ip = $e.principal.ip
+
+  condition:
+    $e
+}
+
+rule custom_app_authz_idor_burst {
+  meta:
+    author = "jusso-dev/soc-ready-logging"
+    description = "Detects rapid HTTP 403 authorization failures across multiple target records (potential IDOR / BOLA probing, MITRE T1213)"
+    severity = "Medium"
+    mitre_attack = "T1213"
+    ism_controls = "ISM-0585, ISM-1228"
+
+  events:
+    $fail.metadata.product_event_type = "authz_fail"
+    $fail.security_result.action = "BLOCK"
+    $actor = $fail.principal.user.userid
+    $app = $fail.target.application
+    $target_id = $fail.target.resource.product_object_id
+
+  match:
+    $actor, $app over 10m
+
+  outcome:
+    $risk_score = 65
+    $denied_count = count($fail.metadata.id)
+    $distinct_targets = count_distinct($target_id)
+
+  condition:
+    #fail >= 10 or $distinct_targets >= 5
+}
+
+rule custom_app_privilege_or_mfa_change {
+  meta:
+    author = "jusso-dev/soc-ready-logging"
+    description = "Detects role/privilege assignment, MFA disablement, or admin user impersonation (MITRE T1098, T1556.006, T1134)"
+    severity = "High"
+    mitre_attack = "T1098, T1556.006, T1134"
+    ism_controls = "ISM-0585, ISM-1228"
+
+  events:
+    $e.metadata.product_event_type = /priv_role_assigned|authn_mfa_disabled|authz_impersonation_start|config_security_changed/
+
+  outcome:
+    $risk_score = 80
+    $event_type = $e.metadata.product_event_type
+    $actor_id = $e.principal.user.userid
+    $target_id = $e.target.resource.product_object_id
+
+  condition:
+    $e
+}
+
+rule custom_app_sensitive_bulk_export {
+  meta:
+    author = "jusso-dev/soc-ready-logging"
+    description = "Detects bulk export of OFFICIAL:Sensitive, PROTECTED, or RESTRICTED records (MITRE T1530)"
+    severity = "High"
+    mitre_attack = "T1530"
+    ism_controls = "ISM-0585, ISM-1228"
+
+  events:
+    $e.metadata.product_event_type = "data_bulk_export"
+    $e.security_result.action = "ALLOW"
+    $e.target.resource.attribute.labels["classification"] = /OFFICIAL:Sensitive|PROTECTED|CONFIDENTIAL|RESTRICTED/
+
+  outcome:
+    $risk_score = 80
+    $actor_id = $e.principal.user.userid
+    $export_name = $e.target.resource.name
+
+  condition:
+    $e
+}
+
+rule custom_app_audit_tamper_attempt {
+  meta:
+    author = "jusso-dev/soc-ready-logging"
+    description = "Detects attempt to disable security logging or clear audit trails (MITRE T1562.008, T1070)"
+    severity = "Critical"
+    mitre_attack = "T1562.008, T1070"
+    ism_controls = "ISM-1405, ISM-1815, ISM-1228"
+
+  events:
+    $e.metadata.product_event_type = "tamper_logging_disabled_or_cleared"
+
+  outcome:
+    $risk_score = 95
+    $actor_id = $e.principal.user.userid
+    $app_id = $e.target.application
+
+  condition:
+    $e
+}
