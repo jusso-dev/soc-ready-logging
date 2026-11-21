@@ -1,0 +1,130 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 520" width="1120" height="520" role="img" aria-labelledby="title desc">
+  <title id="title">Two-Stream SOC-Ready Application Logging Architecture</title>
+  <desc id="desc">Separates high-value, schema-validated security audit events routed to the Government SOC SIEM from operational debug and health telemetry routed to APM and data lake storage.</desc>
+  <defs>
+    <style>
+      .bg { fill: #0f172a; }
+      .panel { fill: #1e293b; stroke: #334155; stroke-width: 1.5; rx: 14; }
+      .sec-box { fill: #064e3b; stroke: #10b981; stroke-width: 2; rx: 10; }
+      .ops-box { fill: #334155; stroke: #94a3b8; stroke-width: 1.5; rx: 10; }
+      .siem-box { fill: #1e1b4b; stroke: #818cf8; stroke-width: 2; rx: 10; }
+      .route-box { fill: #172554; stroke: #38bdf8; stroke-width: 2; rx: 10; }
+      .app-box { fill: #1e293b; stroke: #64748b; stroke-width: 1.5; rx: 10; }
+      .title { fill: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 20px; font-weight: 700; }
+      .subtitle { fill: #94a3b8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 13px; }
+      .panel-title { fill: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; }
+      .box-title { fill: #f8fafc; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 14px; font-weight: 700; }
+      .box-text { fill: #cbd5e1; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 12px; }
+      .mono { fill: #a7f3d0; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; }
+      .badge-sec { fill: #10b981; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 700; }
+      .badge-ops { fill: #94a3b8; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; font-size: 11px; font-weight: 700; }
+      .arrow-sec { stroke: #10b981; stroke-width: 2.5; fill: none; marker-end: url(#head-sec); }
+      .arrow-ops { stroke: #94a3b8; stroke-width: 2; stroke-dasharray: 6 4; fill: none; marker-end: url(#head-ops); }
+      .arrow-siem { stroke: #818cf8; stroke-width: 2.5; fill: none; marker-end: url(#head-siem); }
+    </style>
+    <marker id="head-sec" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#10b981"/>
+    </marker>
+    <marker id="head-ops" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#94a3b8"/>
+    </marker>
+    <marker id="head-siem" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="#818cf8"/>
+    </marker>
+  </defs>
+
+  <rect width="1120" height="520" rx="16" class="bg"/>
+  <text x="32" y="42" class="title">Two-Stream SOC-Ready Application Logging Architecture</text>
+  <text x="32" y="64" class="subtitle">OWASP Logging Vocabulary + ASVS V16 &amp; ACSC ISM System Monitoring (ISM-0585, ISM-0988, ISM-1228, ISM-1405, ISM-1988)</text>
+
+  <!-- Panel 1: Custom Vendor App -->
+  <rect x="28" y="88" width="330" height="404" class="panel"/>
+  <text x="46" y="114" class="panel-title">1. Custom Vendor Application</text>
+
+  <rect x="48" y="130" width="290" height="66" class="app-box"/>
+  <text x="64" y="154" class="box-title">App Business Logic &amp; Auth</text>
+  <text x="64" y="174" class="box-text">Trusted-proxy client IP + W3C correlation_id</text>
+  <text x="64" y="190" class="box-text">Emits state transitions, never raw secrets</text>
+
+  <rect x="48" y="220" width="290" height="134" class="sec-box"/>
+  <text x="64" y="244" class="box-title">SecurityLogger Wrapper</text>
+  <text x="64" y="264" class="mono">stream: "security" | NDJSON</text>
+  <text x="64" y="284" class="box-text">• Strict JSON Schema + OWASP prefixes</text>
+  <text x="64" y="302" class="box-text">• Secret/PII key &amp; regex redaction</text>
+  <text x="64" y="320" class="box-text">• CWE-117 control-char sanitization</text>
+  <text x="64" y="338" class="box-text">• UTC ISO-8601 + 15–60m heartbeat</text>
+
+  <rect x="48" y="376" width="290" height="96" class="ops-box"/>
+  <text x="64" y="400" class="box-title">Operational / Debug Logger</text>
+  <text x="64" y="420" class="box-text">stream: "operational"</text>
+  <text x="64" y="438" class="box-text">• DEBUG/TRACE, SQL, stack traces</text>
+  <text x="64" y="456" class="box-text">• /healthz, /readyz, static assets</text>
+
+  <!-- Internal App Arrows -->
+  <path d="M 193 196 L 193 218" class="arrow-sec"/>
+  <path d="M 304 196 L 304 374" class="arrow-ops"/>
+
+  <!-- Panel 2: Collector / Router -->
+  <rect x="394" y="88" width="240" height="404" class="panel"/>
+  <text x="412" y="114" class="panel-title">2. Collector &amp; Router</text>
+
+  <rect x="414" y="176" width="200" height="120" class="route-box"/>
+  <text x="430" y="202" class="box-title">OTel / Fluent Bit / AMA</text>
+  <text x="430" y="224" class="box-text">Out-of-process shipping</text>
+  <text x="430" y="244" class="mono">if stream == "security"</text>
+  <text x="430" y="262" class="box-text">• Never randomly sampled</text>
+  <text x="430" y="280" class="box-text">• Secondary PII scrub</text>
+
+  <rect x="414" y="336" width="200" height="106" class="app-box"/>
+  <text x="430" y="362" class="box-title">Write-Only Protection</text>
+  <text x="430" y="382" class="box-text">App runtime has zero</text>
+  <text x="430" y="398" class="box-text">modify/delete access on</text>
+  <text x="430" y="414" class="box-text">SIEM sinks (ISM-1815)</text>
+  <text x="430" y="432" class="box-text">DCR / ECS / OCSF map</text>
+
+  <!-- Arrows App -> Collector -->
+  <path d="M 338 260 L 412 232" class="arrow-sec"/>
+  <path d="M 338 424 L 382 424 L 382 276 L 412 276" class="arrow-ops"/>
+
+  <!-- Panel 3: Gov SOC SIEM -->
+  <rect x="670" y="88" width="422" height="252" class="panel"/>
+  <text x="688" y="114" class="panel-title">3A. Government SOC SIEM (High-Value Stream)</text>
+
+  <rect x="690" y="132" width="184" height="186" class="siem-box"/>
+  <text x="706" y="158" class="box-title">Centralised SIEM</text>
+  <text x="706" y="178" class="box-text">Sentinel / Splunk / Elastic</text>
+  <text x="706" y="202" class="box-text">• 100% schema-valid</text>
+  <text x="706" y="220" class="box-text">• &lt; 2 KB P95 payload</text>
+  <text x="706" y="238" class="box-text">• 0% health/debug noise</text>
+  <text x="706" y="256" class="box-text">• 12+ mo searchable</text>
+  <text x="706" y="274" class="box-text">  retention (ISM-1988)</text>
+  <text x="706" y="298" class="mono">P1/P2 Security Events</text>
+
+  <rect x="896" y="132" width="176" height="186" class="siem-box"/>
+  <text x="912" y="158" class="box-title">SOC Detections</text>
+  <text x="912" y="182" class="box-text">• Brute-force -&gt; Login</text>
+  <text x="912" y="202" class="box-text">• MFA disable / fatigue</text>
+  <text x="912" y="222" class="box-text">• Authz / IDOR bursts</text>
+  <text x="912" y="242" class="box-text">• Privilege grants</text>
+  <text x="912" y="262" class="box-text">• Bulk data exports</text>
+  <text x="912" y="282" class="box-text">• Tamper / Heartbeat</text>
+  <text x="912" y="302" class="mono">Sigma • KQL • SPL</text>
+
+  <!-- Panel 4: Operational Storage -->
+  <rect x="670" y="358" width="422" height="134" class="panel"/>
+  <text x="688" y="384" class="panel-title">3B. Operational Telemetry (Never Sent to SIEM)</text>
+
+  <rect x="690" y="400" width="382" height="74" class="ops-box"/>
+  <text x="708" y="424" class="box-title">APM, Metrics &amp; Low-Cost Data Lake</text>
+  <text x="708" y="444" class="box-text">App Insights / Loki / Datadog • 7–30 day retention • Sampled traces</text>
+  <text x="708" y="462" class="box-text">Linked to SIEM incidents via shared correlation_id when deeper debugging is needed</text>
+
+  <!-- Arrows Collector -> Destinations -->
+  <path d="M 614 218 L 688 218" class="arrow-sec"/>
+  <text x="622" y="208" class="badge-sec">SECURITY</text>
+
+  <path d="M 614 268 L 646 268 L 646 436 L 688 436" class="arrow-ops"/>
+  <text x="622" y="424" class="badge-ops">OPS</text>
+
+  <path d="M 874 225 L 894 225" class="arrow-siem"/>
+</svg>

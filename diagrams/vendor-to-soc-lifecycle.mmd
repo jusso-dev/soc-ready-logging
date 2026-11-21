@@ -1,0 +1,9 @@
+flowchart LR
+    S1["1. Install Agent Skills\n./scripts/install-skills.sh"]
+    S2["2. Audit Codebase\nSkill: soc-logging-audit\nScript: audit_repo_logging.py"]
+    S3["3. Implement Wrapper\nSkill: soc-logging-implement\nDrop-in TS / Py / C# / Go"]
+    S4["4. Verify in CI\nSkill: soc-logging-verify\nvalidate_logs.py --strict\nscore_signal_noise.py"]
+    S5["5. Generate SOC Pack\nSkill: soc-handoff-pack\ngenerate_soc_handoff.py"]
+    S6["6. UAT Purple-Team Test\ngenerate_test_events.py\nConfirm SIEM Alert + Heartbeat"]
+
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6

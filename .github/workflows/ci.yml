@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Run automated test suite
+        run: python3 -m unittest discover -s tests -v
+
+      - name: Validate golden security events (strict)
+        run: python3 scripts/validate_logs.py schemas/examples/valid-events.ndjson --strict
+
+      - name: Enforce Signal-to-Noise score >= 90 on golden events
+        run: python3 scripts/score_signal_noise.py schemas/examples/valid-events.ndjson --min-score 90
+
+      - name: Confirm anti-patterns fail strict validation
+        run: |
+          if python3 scripts/validate_logs.py schemas/examples/anti-patterns.ndjson --strict; then
+            echo "ERROR: anti-patterns.ndjson unexpectedly passed validation!"
+            exit 1
+          else
+            echo "Confirmed: anti-patterns.ndjson rejected as expected."
+          fi
+
+      - name: Smoke-test skill installer dry-run
+        run: bash scripts/install-skills.sh --target all-project --dry-run

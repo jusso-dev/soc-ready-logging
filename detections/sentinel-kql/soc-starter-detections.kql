@@ -1,0 +1,69 @@
+// ============================================================================
+// Microsoft Sentinel KQL — Starter Detections for soc-ready-logging (v1.0.0)
+// Assumes custom table `CustomAppSecurity_CL` (or replace with your DCR table).
+// ============================================================================
+
+// 1. Brute-Force / Credential Stuffing Followed by Successful Login (T1110, T1078)
+CustomAppSecurity_CL
+| where TimeGenerated > ago(1h)
+| where stream == "security" and tostring(app.environment) == "prod"
+| where event in ("authn_login_fail", "authn_login_success", "authn_login_success_after_fail")
+| extend ActorId = tostring(actor.id), SrcIp = tostring(source.ip), AppId = tostring(app.id)
+| summarize
+    FailCount = countif(event == "authn_login_fail"),
+    SuccessCount = countif(event in ("authn_login_success", "authn_login_success_after_fail")),
+    DirectAfterFail = countif(event == "authn_login_success_after_fail"),
+    CorrelationIds = make_set(correlation_id, 10)
+    by AppId, ActorId, SrcIp, bin(TimeGenerated, 15m)
+| where DirectAfterFail > 0 or (FailCount >= 5 and SuccessCount >= 1)
+
+// 2. Authorization / IDOR Probing Burst (HTTP 403 Spike) (T1213)
+CustomAppSecurity_CL
+| where TimeGenerated > ago(1h)
+| where stream == "security" and tostring(app.environment) == "prod"
+| where event == "authz_fail"
+| extend ActorId = tostring(actor.id), SrcIp = tostring(source.ip), AppId = tostring(app.id), TargetId = tostring(target.id)
+| summarize
+    DeniedCount = count(),
+    DistinctTargets = dcount(TargetId),
+    SampleTargets = make_set(TargetId, 10)
+    by AppId, ActorId, SrcIp, bin(TimeGenerated, 10m)
+| where DeniedCount >= 10 or DistinctTargets >= 5
+
+// 3. Privilege Escalation, MFA Disablement, or User Impersonation (T1098, T1556.006, T1134)
+CustomAppSecurity_CL
+| where TimeGenerated > ago(1h)
+| where stream == "security" and tostring(app.environment) == "prod"
+| where event in ("priv_role_assigned", "authn_mfa_disabled", "authz_impersonation_start", "config_security_changed")
+| project
+    TimeGenerated,
+    AppId = tostring(app.id),
+    Event = event,
+    Severity = severity,
+    ActorId = tostring(actor.id),
+    ImpersonatedBy = tostring(actor.impersonated_by),
+    SrcIp = tostring(source.ip),
+    TargetId = tostring(target.id),
+    Message = message,
+    Details = details,
+    CorrelationId = correlation_id
+
+// 4. Bulk Export of Sensitive Government Data (T1530)
+CustomAppSecurity_CL
+| where TimeGenerated > ago(1h)
+| where stream == "security" and tostring(app.environment) == "prod"
+| where event == "data_bulk_export" and outcome == "success"
+| extend RecordCount = toint(details.record_count), Classification = tostring(target.classification)
+| where Classification in ("OFFICIAL:Sensitive", "PROTECTED", "CONFIDENTIAL", "RESTRICTED") or RecordCount >= 500
+| project TimeGenerated, AppId = tostring(app.id), ActorId = tostring(actor.id), SrcIp = tostring(source.ip), Classification, RecordCount, TargetName = tostring(target.name), CorrelationId = correlation_id
+
+// 5. Silent Logging Pipeline Dropout (Heartbeat Absence > 90m) (ISM-1405 / T1562.008)
+let ExpectedApps = datatable(AppId:string) ["gov-grants-portal"]; // Add your onboarded prod app.id values
+let RecentHeartbeats = CustomAppSecurity_CL
+    | where TimeGenerated > ago(90m)
+    | where stream == "security" and tostring(app.environment) == "prod"
+    | where event == "sys_logging_heartbeat"
+    | summarize LastHeartbeat = max(TimeGenerated) by AppId = tostring(app.id);
+ExpectedApps
+| join kind=leftanti RecentHeartbeats on AppId
+| extend AlertTitle = strcat("Security logging heartbeat missing (>90m) for ", AppId)

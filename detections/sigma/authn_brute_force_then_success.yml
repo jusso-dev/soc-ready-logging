@@ -1,0 +1,26 @@
+title: Custom Application Brute Force Followed by Successful Login
+id: 7a3f5c10-2e6b-4d4e-9a4b-6f9c12b40001
+status: experimental
+description: Detects a successful authentication immediately following repeated failed login attempts in a custom application emitting the canonical soc-ready-logging schema.
+author: jusso-dev/soc-ready-logging
+date: 2026-11-21
+references:
+  - https://cheatsheetseries.owasp.org/cheatsheets/Logging_Vocabulary_Cheat_Sheet.html
+  - https://www.cyber.gov.au/ism
+logsource:
+  category: application
+  product: custom_app
+detection:
+  selection:
+    stream: security
+    event: authn_login_success_after_fail
+    outcome: success
+  condition: selection
+falsepositives:
+  - Legitimate user mistyping password immediately after password rotation (verify source.ip and geo_country)
+level: high
+tags:
+  - attack.credential_access
+  - attack.t1110
+  - attack.initial_access
+  - attack.t1078

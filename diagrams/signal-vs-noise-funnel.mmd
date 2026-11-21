@@ -1,0 +1,11 @@
+flowchart TD
+    RAW["100% Raw Application Activity\n(HTTP requests, health probes, static assets, SQL, auth, admin, exports)"]
+    DROP1["Drop from SIEM -> Route to APM/Ops\n• /healthz, /readyz, /metrics\n• Static files (.js, .css, .png)\n• DEBUG / TRACE & SQL queries\n• Routine 200 OK page loads & per-request JWT checks"]
+    CAND["~5–10% Security-Relevant Candidates\n(Authn, Authz 403, IAM, Privileges, Sensitive Data, Config, Crypto, Tamper)"]
+    DEDUPE["Noise Control & Safety Gate\n• Windowed rate-limit summaries\n• State-transition lockouts only\n• Redact secrets, tokens, TFN/Medicare/PAN\n• Strip CWE-117 control chars"]
+    SIEM["~1–3% High-Value SOC Signal\n• 100% schema-valid NDJSON\n• < 2 KB P95 per event\n• Signal-to-Noise Score >= 90/100\n• Direct Sigma / KQL / SPL alerts"]
+
+    RAW --> DROP1
+    RAW --> CAND
+    CAND --> DEDUPE
+    DEDUPE --> SIEM

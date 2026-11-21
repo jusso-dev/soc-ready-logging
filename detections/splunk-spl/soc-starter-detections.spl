@@ -1,0 +1,24 @@
+# ============================================================================
+# Splunk SPL — Starter Detections for soc-ready-logging (v1.0.0)
+# Replace `index=app_security` with your agency's security application index.
+# ============================================================================
+
+# 1. Brute Force Followed by Successful Login (T1110, T1078)
+index=app_security stream="security" app.environment="prod" (event="authn_login_fail" OR event="authn_login_success" OR event="authn_login_success_after_fail")
+| stats count(eval(event="authn_login_fail")) as fails count(eval(event="authn_login_success" OR event="authn_login_success_after_fail")) as successes count(eval(event="authn_login_success_after_fail")) as after_fail values(correlation_id) as correlation_ids by app.id actor.id source.ip
+| where after_fail > 0 OR (fails >= 5 AND successes >= 1)
+
+# 2. Authorization / IDOR Probing Burst (T1213)
+index=app_security stream="security" app.environment="prod" event="authz_fail"
+| bin _time span=10m
+| stats count as denials dc(target.id) as distinct_targets values(target.id) as sample_targets by _time app.id actor.id source.ip
+| where denials >= 10 OR distinct_targets >= 5
+
+# 3. High-Risk Admin / Privilege / Tamper Events (T1098, T1556.006, T1562.008)
+index=app_security stream="security" app.environment="prod" event IN ("priv_role_assigned","authn_mfa_disabled","authz_impersonation_start","tamper_logging_disabled_or_cleared")
+| table _time app.id event severity actor.id source.ip target.id message correlation_id
+
+# 4. Sensitive Bulk Data Export (T1530)
+index=app_security stream="security" app.environment="prod" event="data_bulk_export" outcome="success"
+| where target.classification IN ("OFFICIAL:Sensitive","PROTECTED","CONFIDENTIAL","RESTRICTED") OR 'details.record_count' >= 500
+| table _time app.id actor.id source.ip target.classification target.name details.record_count correlation_id

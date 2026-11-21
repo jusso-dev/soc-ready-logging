@@ -1,0 +1,276 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/jusso-dev/soc-ready-logging/schemas/security-event.schema.json",
+  "title": "SOC-Ready Application Security Event",
+  "description": "Canonical high-value, low-noise security audit event contract for custom software vendors, aligned to OWASP Logging Vocabulary / ASVS and ACSC ISM System Monitoring.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "timestamp",
+    "stream",
+    "event",
+    "severity",
+    "outcome",
+    "app",
+    "actor",
+    "source",
+    "correlation_id",
+    "message"
+  ],
+  "properties": {
+    "schema_version": {
+      "type": "string",
+      "const": "1.0.0",
+      "description": "Semantic version of the canonical security event schema."
+    },
+    "timestamp": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d{1,9})?Z$",
+      "description": "UTC ISO-8601 timestamp with trailing Z (ACSC ISM-0988 accurate/consistent time source)."
+    },
+    "stream": {
+      "type": "string",
+      "const": "security",
+      "description": "Explicit stream marker separating SOC SIEM security events from operational/debug telemetry."
+    },
+    "event": {
+      "type": "string",
+      "pattern": "^(authn|authz|session|user|priv|data|sys|config|input|api|crypto|tamper)_[a-z0-9_]+$",
+      "description": "OWASP Logging Vocabulary-aligned event identifier (e.g., authn_login_fail, authz_fail, priv_role_assigned)."
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "authentication",
+        "authorization",
+        "session",
+        "iam",
+        "privilege",
+        "data_access",
+        "system",
+        "configuration",
+        "input_validation",
+        "api",
+        "cryptography",
+        "tamper"
+      ],
+      "description": "High-level security domain mapped to ECS event.category / OCSF class."
+    },
+    "severity": {
+      "type": "string",
+      "enum": ["INFO", "WARN", "HIGH", "CRITICAL"],
+      "description": "Security severity. DEBUG/TRACE are intentionally excluded from the SIEM security stream."
+    },
+    "outcome": {
+      "type": "string",
+      "enum": ["success", "failure", "blocked", "unknown"],
+      "description": "Result of the security-relevant action."
+    },
+    "app": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name", "environment", "version"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 64,
+          "pattern": "^[a-z0-9][a-z0-9._-]*$",
+          "description": "Stable machine-readable application identifier (e.g., gov-grants-portal)."
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 120,
+          "description": "Human-readable application or service name."
+        },
+        "component": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Sub-service or module emitting the event (e.g., auth-api, export-worker)."
+        },
+        "environment": {
+          "type": "string",
+          "enum": ["prod", "staging", "uat", "test", "dev"],
+          "description": "Deployment environment so the SOC can separate production alerts."
+        },
+        "version": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 64,
+          "description": "Deployed application release or build identifier."
+        },
+        "host": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 255,
+          "description": "Hostname, pod name, or instance ID (ACSC ISM-0585 ICT equipment involved)."
+        }
+      }
+    },
+    "actor": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id"],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": ["user", "admin", "service", "api_client", "anonymous", "system"],
+          "description": "Principal type initiating the action."
+        },
+        "id": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "description": "Immutable principal identifier (e.g., Entra OID, UUID, service principal ID). Never a raw password or token."
+        },
+        "username": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Optional non-secret login identifier or pseudonymous handle (ensure alignment with agency privacy rules)."
+        },
+        "roles": {
+          "type": "array",
+          "items": { "type": "string", "maxLength": 64 },
+          "maxItems": 20,
+          "description": "Effective roles or privilege tier at event time."
+        },
+        "tenant_id": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Agency, organisation, or tenant identifier for multi-tenant SaaS/custom apps."
+        },
+        "session_id_hash": {
+          "type": "string",
+          "pattern": "^sha256:[a-f0-9]{16,64}$",
+          "description": "Salted or truncated SHA-256 hash of session identifier for correlation without exposing the raw token."
+        },
+        "impersonated_by": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "Actor ID of administrator/support user when acting on behalf of another user."
+        }
+      }
+    },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["ip"],
+      "properties": {
+        "ip": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 45,
+          "description": "True client IP address (IPv4 or IPv6) derived from trusted proxy headers or socket."
+        },
+        "port": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 65535
+        },
+        "user_agent": {
+          "type": "string",
+          "maxLength": 512,
+          "description": "Sanitized client User-Agent string."
+        },
+        "asn": {
+          "type": "integer",
+          "minimum": 0
+        },
+        "geo_country": {
+          "type": "string",
+          "pattern": "^[A-Z]{2}$",
+          "description": "ISO 3166-1 alpha-2 country code if enriched at edge."
+        }
+      }
+    },
+    "target": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "type": {
+          "type": "string",
+          "maxLength": 64,
+          "description": "Resource type (e.g., user, role, document, api_key, config, export, record)."
+        },
+        "id": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Identifier of the targeted resource or filename (ACSC ISM-0585)."
+        },
+        "name": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Sanitized resource name or path (never containing secrets or sensitive PII)."
+        },
+        "classification": {
+          "type": "string",
+          "enum": ["UNOFFICIAL", "OFFICIAL", "OFFICIAL:Sensitive", "PROTECTED", "PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"],
+          "description": "Data sensitivity classification (supports Australian PSPF & enterprise labels)."
+        }
+      }
+    },
+    "http": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "method": {
+          "type": "string",
+          "enum": ["GET", "POST", "PUT", "PATCH", "DELETE", "HEAD", "OPTIONS"]
+        },
+        "route": {
+          "type": "string",
+          "maxLength": 256,
+          "description": "Parameterized route template (e.g., /api/v1/cases/{id}) without query secrets."
+        },
+        "status_code": {
+          "type": "integer",
+          "minimum": 100,
+          "maximum": 599
+        }
+      }
+    },
+    "correlation_id": {
+      "type": "string",
+      "minLength": 8,
+      "maxLength": 128,
+      "pattern": "^[A-Za-z0-9._:-]+$",
+      "description": "Request/trace correlation ID (e.g., W3C traceparent trace-id or UUID) to join gateway, app, and DB logs."
+    },
+    "reason": {
+      "type": "string",
+      "maxLength": 128,
+      "description": "Machine-readable reason code (e.g., invalid_credentials, mfa_required, missing_role, rate_limit_exceeded)."
+    },
+    "message": {
+      "type": "string",
+      "minLength": 4,
+      "maxLength": 512,
+      "description": "Concise, human-readable single-line description of what happened (ACSC ISM-0585)."
+    },
+    "details": {
+      "type": "object",
+      "description": "Bounded, structured event-specific attributes (e.g., changed field names, record_count, mfa_method, retry_count). Must never contain secrets or unredacted PII.",
+      "maxProperties": 25
+    },
+    "compliance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "owasp_event": { "type": "string", "maxLength": 128 },
+        "mitre_attack": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^T\\d{4}(\\.\\d{3})?$" },
+          "maxItems": 8
+        },
+        "ism_controls": {
+          "type": "array",
+          "items": { "type": "string", "pattern": "^ISM-\\d{4}$" },
+          "maxItems": 10
+        }
+      }
+    }
+  }
+}
