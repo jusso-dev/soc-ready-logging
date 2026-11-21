@@ -13,6 +13,15 @@
 
 Aligned to **OWASP** (Logging Cheat Sheet, Application Logging Vocabulary, ASVS v4.0.3 V7 & v5.0 V16, Top 10 A09) and **ACSC / ASD** (Information Security Manual System Monitoring, *Best Practices for Event Logging and Threat Detection*, and *Priority Logs for SIEM Ingestion*)—complete with **Azure, AWS, GCP & Cross-Cloud federation guides**, **Diagram-as-Code architecture diagrams with official cloud icons**, **zero-dependency CLI scripts**, **drop-in language wrappers**, **starter SIEM detections**, and **portable AI coding agent skills**.
 
+## Part of the Microsoft security logging stack
+
+1. **[microsoft-security-logging-guide](https://github.com/jusso-dev/microsoft-security-logging-guide)** — What to log: practical, product-by-product guidance on getting high-value security logs from Microsoft products into Microsoft Sentinel and Microsoft Defender XDR.
+2. **[soc-ready-logging](https://github.com/jusso-dev/soc-ready-logging)** *(you are here)* — How to instrument custom applications: OWASP and ACSC ISM schemas, CLI validators, language wrappers, starter detections, and AI agent skills for high-value, low-noise security logging.
+3. **[Bower](https://github.com/jusso-dev/Bower)** — How to normalise, redact, and ship logs: self-hosted security telemetry normaliser and Australian privacy gateway with default-deny selection, host-side PII redaction, tamper-evident buffering, and signed Sentinel arrival proof.
+4. **Operate on the logs in Microsoft Defender XDR and Microsoft Sentinel:**
+   - **[blueboard](https://github.com/jusso-dev/blueboard)** — Shared board where AI agents and SOC analysts work incidents together across Microsoft Defender XDR and Microsoft Sentinel, with human-approved containment and eradication.
+   - **[crosswire](https://github.com/jusso-dev/crosswire)** — Open-source SOC kit for GitHub Copilot and Squad agents that hunt in Microsoft Defender XDR and Microsoft Sentinel, cross-compare threat intelligence, and propose gated responses for human approval.
+
 ---
 
 ![Two-Stream SOC-Ready Logging Architecture](./diagrams/architecture-two-stream.png)
