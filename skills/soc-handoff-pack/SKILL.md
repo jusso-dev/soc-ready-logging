@@ -38,3 +38,4 @@ Use this skill once security logging is implemented and verified, to deliver eve
 
 4. **Attach verification evidence**
    - Include the `validate_logs.py --strict` pass summary and `score_signal_noise.py` scorecard so IRAP assessors and SOC leads can sign off immediately.
+   - If the deployment uses **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)**, attach the signed **`bower evidence run`** arrival bundle (canary KQL verification + ACSC ISM / Essential Eight mapping).

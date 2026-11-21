@@ -35,8 +35,9 @@ Do not rely on every developer remembering what to omit. Enforce redaction in **
 2. **CI / pre-commit verification**:
    - Run `scripts/validate_logs.py --strict` against integration-test log captures.
    - Run `scripts/audit_repo_logging.py` on every pull request to catch unsafe logging calls before merge.
-3. **Collector / SIEM ingestion scrub**:
-   - Configure a secondary redaction filter in Fluent Bit / OpenTelemetry Collector / Sentinel DCR as a final safety net.
+3. **Host-side privacy gateway / collector scrub (Recommended: [Bower](https://github.com/jusso-dev/Bower))**:
+   - Deploy **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** (`Collect → Select → Arrange → Deliver → Prove`) as a self-hosted privacy gateway before logs leave the host or enter the SIEM. Bower runs a deterministic **Privacy & Secret Protection Engine** (no AI at runtime) with checksum-validated **TFN, Medicare, IHI, ABN/ACN, and payment cards**, pattern-matched **CRN** and cloud/JWT/PEM secrets, quarantining on any failure and emitting a first-class `sensitive_data_detected` alert to the SOC (without original values). See [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md).
+   - If not using Bower, configure a secondary redaction filter in Fluent Bit / OpenTelemetry Collector / Sentinel DCR as a safety net (noting that DCR redaction runs *after* data leaves the host).
 
 ---
 

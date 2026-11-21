@@ -23,6 +23,8 @@ This guide provides **battle-tested, zero-static-secret patterns** for moving `s
 
 ## 2. Inter-Cloud Transport Matrix
 
+> **Unified open-source option — [jusso-dev/Bower](https://github.com/jusso-dev/Bower)**: Instead of stitching together different connectors and redaction rules per cloud, **Bower** (`bower-cloud` + signed `aws-security` / `gcp-security` packs) ingests custom apps, legacy SQL Server / Windows Event Logs, AWS (EventBridge→SQS / Firehose→S3, IAM roles only), and GCP (Pub/Sub, WIF only—key files refused) through **one deterministic host-side Australian PII redaction engine and default-deny policy**, then delivers with a tamper-evident queue ledger to **Microsoft Sentinel**, **S3**, or **Splunk HEC / HTTP NDJSON**—and proves arrival with `bower evidence run`. See [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md).
+
 | Source Environment | Destination SIEM | Recommended Pattern (Preferred) | Alternative / Low-Ops Pattern | Authentication |
 |---|---|---|---|---|
 | **AWS** | **Azure (Microsoft Sentinel)** | CloudWatch Filter / FireLens -> Firehose -> **S3 + SQS** -> **Sentinel AWS S3 Codeless Connector (CCF)** | OTel Collector / [`jusso-dev/Bower`](https://github.com/jusso-dev/Bower) -> Azure Monitor **DCE/DCR Logs Ingestion API** | AWS IAM Role + **Entra OIDC Trust** (no IAM keys!) |

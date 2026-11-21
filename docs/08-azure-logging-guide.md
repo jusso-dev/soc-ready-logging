@@ -66,7 +66,7 @@ If your app runs on **AKS** or **Azure Container Apps**, avoid embedding Azure M
 2. Run **OpenTelemetry Collector** or **Fluent Bit** as a DaemonSet/sidecar that:
    - Routes `stream == "security"` -> Azure Monitor Logs Ingestion API (DCE/DCR) -> Sentinel.
    - Routes `stream != "security"` -> Application Insights / Auxiliary logs.
-3. For **legacy or custom applications** that cannot easily push to a DCR natively, consider [`jusso-dev/Bower`](https://github.com/jusso-dev/Bower) to collect and forward security events cleanly into Microsoft Sentinel.
+3. **Want host-side Australian PII redaction, default-deny selection, tamper-evident local buffering, DCR drift checks, and signed Sentinel arrival proof (`bower evidence run`)?** Deploy **[jusso-dev/Bower](https://github.com/jusso-dev/Bower)** ([full guide](./12-normalising-and-shipping-with-bower.md))—it supports both AMA JSONL spooling and the real Azure Monitor Logs Ingestion API (plus Azure Functions isolated worker and legacy SQL Server / Windows Event Log adapters).
 
 ---
 

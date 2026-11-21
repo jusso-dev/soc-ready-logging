@@ -72,6 +72,8 @@ If the agency uses **Amazon Security Lake** as its central security data plane:
    - `api_*` / `authz_*` / `data_*` -> OCSF Class `6003` (API Activity)
 3. Subscribe the SOC SIEM (Sentinel, Splunk, Elastic, or Chronicle) as a Security Lake **Subscriber** over S3 + SQS.
 
+> **Open-source normaliser option ([jusso-dev/Bower](https://github.com/jusso-dev/Bower))**: Bower's `bower-cloud` agent + signed `aws-security` pack pulls GuardDuty, Security Hub, high-value CloudTrail (via EventBridge → SQS), and application Bower events (via Firehose → S3) using **IAM role credentials only** (zero stored keys, Australian region pinning), runs host-side Australian PII/secret redaction, and delivers normalised semantic events to Microsoft Sentinel, S3 (`BOWER_OUTPUT=s3`), or Splunk HEC (`BOWER_OUTPUT=http`). See [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md).
+
 ---
 
 ## 4. True Client IP Behind CloudFront, AWS WAF & ALB

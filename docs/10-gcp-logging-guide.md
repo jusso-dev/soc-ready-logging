@@ -64,6 +64,8 @@ gcloud logging sinks update _Default \
    - `correlation_id` -> `metadata.product_log_id`
 3. Deploy YARA-L rules corresponding to [`detections/`](../detections/README.md) (brute-force-then-success, 403 IDOR burst, privilege grant, bulk export, tamper, and `sys_logging_heartbeat` absence).
 
+> **Open-source normaliser option ([jusso-dev/Bower](https://github.com/jusso-dev/Bower))**: Need GCP Security Command Center findings, Admin Activity audit logs, and custom Cloud Run/GKE app security events normalised onto one contract with host-side Australian PII redaction and delivered to Microsoft Sentinel, S3, or Splunk HEC? Bower's signed `gcp-security` pack + Terraform consumes Pub/Sub via **Workload Identity Federation / ADC (key files refused)** with Australian region pinning. See [`12-normalising-and-shipping-with-bower.md`](./12-normalising-and-shipping-with-bower.md).
+
 ---
 
 ## 4. True Client IP Behind Cloud Armor & Global Load Balancer

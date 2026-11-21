@@ -42,3 +42,6 @@ uv run --with diagrams python3 diagrams/generate_diagrams.py
 
 ### 7. Cross-Cloud & Hybrid Log Federation ([Guide](../docs/11-cross-cloud-log-federation.md))
 ![Cross-Cloud & Hybrid Log Federation](./cross-cloud-log-federation.png)
+
+### 8. Bower Open-Source Privacy Gateway & Normaliser ([Guide](../docs/12-normalising-and-shipping-with-bower.md))
+![Bower Privacy Gateway & Normaliser](./bower-privacy-gateway.png)

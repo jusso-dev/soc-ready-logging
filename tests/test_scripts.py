@@ -205,6 +205,7 @@ class TestDiagramsAndCloudDocs(unittest.TestCase):
             "cloud-aws-security-lake.png",
             "cloud-gcp-secops.png",
             "cross-cloud-log-federation.png",
+            "bower-privacy-gateway.png",
         ]
         diagrams_dir = REPO_ROOT / "diagrams"
         self.assertTrue((diagrams_dir / "generate_diagrams.py").exists())
@@ -221,6 +222,7 @@ class TestDiagramsAndCloudDocs(unittest.TestCase):
             "09-aws-logging-guide.md",
             "10-gcp-logging-guide.md",
             "11-cross-cloud-log-federation.md",
+            "12-normalising-and-shipping-with-bower.md",
         ):
             self.assertTrue((docs_dir / doc).exists(), f"Missing cloud guide: {doc}")
 

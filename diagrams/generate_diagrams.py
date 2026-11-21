@@ -23,6 +23,7 @@ from diagrams.aws.security import IAMRole, KMS as AwsKms, SecurityHub, SecurityL
 from diagrams.aws.storage import S3
 from diagrams.azure.analytics import EventHubs, LogAnalyticsWorkspaces
 from diagrams.azure.compute import AppServices, ContainerApps, FunctionApps
+from diagrams.azure.database import SQLDatabases
 from diagrams.azure.identity import EntraManagedIdentities
 from diagrams.azure.monitor import ApplicationInsights, Logs as AzLogs, Monitor
 from diagrams.azure.network import ExpressrouteCircuits, FrontDoors, PrivateEndpoint
@@ -34,6 +35,7 @@ from diagrams.gcp.network import Armor
 from diagrams.gcp.operations import Logging as GcpLogging, Monitoring as GcpMonitoring
 from diagrams.gcp.security import Iam as GcpIam, KMS as GcpKms, SecurityCommandCenter
 from diagrams.generic.network import Firewall
+from diagrams.generic.storage import Storage
 from diagrams.onprem.ci import GithubActions
 from diagrams.onprem.client import Users
 from diagrams.onprem.logging import FluentBit
@@ -116,8 +118,8 @@ def build_two_stream() -> None:
             sec_log = SecuritySettings("SecurityLogger Wrapper\nstream='security' | Redact\nCWE-117 Safe | UTC Z")
             ops_log = AzLogs("Operational Logger\nDEBUG | /healthz | Perf")
 
-        with Cluster("2. Collector & Stream Router", graph_attr=cluster_style("#eff6ff", "#93c5fd", "#1e3a8a")):
-            router = FluentBit("Fluent Bit / OTel\nFilter on stream field\nWrite-Only Sink Creds")
+        with Cluster("2. Normaliser & Privacy Gateway", graph_attr=cluster_style("#eff6ff", "#93c5fd", "#1e3a8a")):
+            router = FluentBit("Bower (Recommended)\nor Fluent Bit / OTel\nDefault-Deny | AU PII Redact")
 
         with Cluster("3A. Government SOC SIEM (ISM-1405 / ISM-1988)", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
             siems = [
@@ -360,13 +362,13 @@ def build_cross_cloud_federation() -> None:
             az_eh = EventHubs("Event Hubs\n(Entra WIF)")
 
         with Cluster("On-Prem / Private Gov Network", graph_attr=cluster_style("#f8fafc", "#94a3b8", "#334155")):
-            onprem_fb = FluentBit("OTel / Fluent Bit\nDisk Buffer + mTLS")
+            onprem_fb = FluentBit("Bower / OTel / Fluent Bit\nTamper Ledger + mTLS")
             link = ExpressrouteCircuits("ExpressRoute /\nDirect Connect /\nInterconnect")
 
         with Cluster("Target Agency SOC SIEM Platforms", graph_attr=cluster_style("#ecfdf5", "#10b981", "#065f46")):
-            t_sentinel = AzureSentinel("Microsoft Sentinel\n(Azure CCF / DCR /\nBower)")
+            t_sentinel = AzureSentinel("Microsoft Sentinel\n(Bower / Azure CCF / DCR)")
             t_secops = SecurityCommandCenter("Google SecOps\n(Chronicle Native Feeds)")
-            t_seclake = SecurityLake("AWS Security Lake\n& Splunk / OpenSearch")
+            t_seclake = SecurityLake("AWS Security Lake\n& Splunk HEC (Bower)")
 
         aws_fh >> Edge(color="#ea580c", penwidth="2.0") >> aws_s3_sqs
         gcp_sink >> Edge(color="#2563eb", penwidth="2.0") >> gcp_ps
@@ -387,6 +389,48 @@ def build_cross_cloud_federation() -> None:
         link >> ops_edge("Private Link") >> t_seclake
 
 
+def build_bower_diagram() -> None:
+    with Diagram(
+        "Bower Open-Source Privacy Gateway & Normaliser (Collect -> Select -> Arrange -> Deliver -> Prove)",
+        filename=str(OUT_DIR / "bower-privacy-gateway"),
+        outformat="png",
+        show=False,
+        direction="LR",
+        graph_attr=BASE_GRAPH_ATTR,
+        node_attr=BASE_NODE_ATTR,
+        edge_attr=BASE_EDGE_ATTR,
+    ):
+        with Cluster("1. Collect (Multi-Cloud, Custom & Legacy)", graph_attr=cluster_style("#f8fafc", "#cbd5e1")):
+            src_app = AppServices("Custom Apps\n(Bower SDK / NDJSON\n+ Docker Sidecar)")
+            src_sql = SQLDatabases("Legacy SQL Server\nAudit Tables\n(ReadOnly EF Adapter)")
+            src_aws = SQS("AWS Security Signal\nGuardDuty / CloudTrail\n(IAM Role — No Keys)")
+            src_gcp = PubSub("GCP Security Signal\nSCC / Admin Audit\n(WIF — Key Files Refused)")
+
+        with Cluster("2. Select & Arrange (Host-Side Before Egress)", graph_attr=cluster_style("#eff6ff", "#60a5fa", "#1e3a8a")):
+            privacy = SecuritySettings("AU Privacy & Secret Engine\nTFN, Medicare, IHI, ABN, CRN\nJWT/Keys -> Quarantine on Fail")
+            policy = FluentBit("Default-Deny Signed Pack\nSchema + Value Policy\nFlood Suppression")
+            queue = Storage("SQLite WAL Queue\nHash-Chained Tamper Ledger\nDead-Letter & Replay")
+
+        with Cluster("3. Deliver & Prove (ACSC ISM & Essential Eight)", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
+            out_sentinel = AzureSentinel("Microsoft Sentinel\nLogs Ingestion API / DCR\nor AMA JSONL Spool")
+            out_s3 = S3("AWS S3 Output\n(Default Cred Chain)")
+            out_hec = Splunk("Splunk HEC /\nHTTP NDJSON")
+            prove = Alerting("bower evidence run\nLive Sentinel Canary KQL\nSigned ISM / E8 Bundle")
+
+        src_app >> sec_edge() >> privacy
+        src_sql >> sec_edge() >> privacy
+        src_aws >> fed_edge("bower-cloud", "#ea580c") >> privacy
+        src_gcp >> fed_edge("bower-cloud", "#2563eb") >> privacy
+
+        privacy >> sec_edge("Redacted + metadata\n(sensitive_data_detected)") >> policy
+        policy >> sec_edge("Approved events only") >> queue
+
+        queue >> sec_edge("DCE / DCR or AMA") >> out_sentinel
+        queue >> fed_edge("BOWER_OUTPUT=s3", "#ea580c") >> out_s3
+        queue >> ops_edge("BOWER_OUTPUT=http") >> out_hec
+        out_sentinel >> sec_edge("Read-only KQL proof") >> prove
+
+
 def main() -> int:
     build_two_stream()
     build_signal_vs_noise()
@@ -395,7 +439,8 @@ def main() -> int:
     build_aws_diagram()
     build_gcp_diagram()
     build_cross_cloud_federation()
-    print(f"Generated 7 PNG diagrams cleanly in {OUT_DIR}")
+    build_bower_diagram()
+    print(f"Generated 8 PNG diagrams cleanly in {OUT_DIR}")
     return 0
 
 
