@@ -36,5 +36,9 @@ Use this skill to implement or refactor an application's security logging so a G
 1. Add the minimal `SecurityLogger` module tailored to the repo's language and DI/framework conventions (no unnecessary third-party dependencies).
 2. Add or update request-context middleware for `correlation_id` and trusted-proxy `source.ip`.
 3. Instrument P1 security boundaries cleanly using the wrapper.
-4. Configure the collector/log-router snippet (Fluent Bit / OTel / Azure Monitor DCR filter on `stream == "security"`) if deployment manifests exist in the repo.
+4. Configure the cloud-appropriate collector/router filter (`stream == "security"`) if deployment/IaC manifests exist in the repo:
+   - **Azure**: DCR KQL transform (`where stream == "security"`), Managed Identity with write-only `Monitoring Metrics Publisher`, `X-Azure-ClientIP` behind Front Door (`docs/08-azure-logging-guide.md`).
+   - **AWS**: CloudWatch Subscription Filter (`{ $.stream = "security" }`) or FireLens `rewrite_tag` -> Firehose -> isolated Log Archive account S3 Object Lock / Security Lake (`docs/09-aws-logging-guide.md`).
+   - **GCP**: Cloud Logging Router Sink (`jsonPayload.stream="security"`) -> Pub/Sub + Locked Log Bucket -> Google SecOps (`docs/10-gcp-logging-guide.md`).
+   - **Cross-Cloud / Hybrid**: Always filter before egress and authenticate via OIDC / Workload Identity Federation (zero static IAM/SA keys — `docs/11-cross-cloud-log-federation.md`).
 5. Hand off to `soc-logging-verify` to run automated schema, redaction, injection, and signal-to-noise tests.

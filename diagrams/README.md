@@ -1,28 +1,44 @@
-# Architecture & Workflow Diagrams
+# Architecture & Cloud Diagrams (Diagram as Code)
 
-Each diagram is provided in **both** editable Mermaid source (`.mmd`) and publication-ready standalone SVG (`.svg`) so vendors can drop them straight into Solution Architecture Designs (SADs), System Security Plans (SSPs), and SOC Handoff Packs.
+All diagrams are generated from [`generate_diagrams.py`](./generate_diagrams.py) using the Python [`diagrams`](https://diagrams.mingrammer.com/) library (Graphviz) with:
 
-## 1. Two-Stream SOC-Ready Logging Architecture
-Separates `stream: "security"` (high-value, schema-validated, never sampled -> Government SOC SIEM) from `stream: "operational"` (debug, health checks, perf -> APM / data lake).
+- **One consistent font family** (`Helvetica`) across titles, clusters, nodes, and edge labels
+- **Official cloud architecture icons** for **Microsoft Azure**, **Amazon Web Services (AWS)**, **Google Cloud Platform (GCP)**, and OSS / On-Premises tooling
+- **Consistent color semantics**: Emerald (`stream == "security"` -> SIEM), Slate dashed (`stream != "security"` -> Operational/APM), Blue/Orange (Zero-Trust Cross-Cloud Federation)
 
-![Two-Stream Architecture](./architecture-two-stream.svg)
+## Regenerating Diagrams
 
-Source: [`architecture-two-stream.mmd`](./architecture-two-stream.mmd)
+Requires Graphviz (`brew install graphviz` or `apt-get install graphviz`) and `uv` (or `pip install diagrams`):
 
----
-
-## 2. Signal-to-Noise Filtering Funnel
-Illustrates how applying ACSC Priority Logs discipline cuts SIEM ingestion volume by 90%+ while improving SOC detection fidelity.
-
-![Signal-to-Noise Funnel](./signal-vs-noise-funnel.svg)
-
-Source: [`signal-vs-noise-funnel.mmd`](./signal-vs-noise-funnel.mmd)
+```bash
+uv run --with diagrams python3 diagrams/generate_diagrams.py
+```
 
 ---
 
-## 3. Low-Effort Vendor-to-SOC Lifecycle
-Shows the 6-step human + AI coding agent workflow from installing portable skills to live purple-team verification in a Government SOC SIEM.
+## Core Architecture & Workflow Diagrams
 
-![Vendor-to-SOC Lifecycle](./vendor-to-soc-lifecycle.svg)
+### 1. Two-Stream SOC-Ready Application Logging Architecture
+![Two-Stream Architecture](./architecture-two-stream.png)
 
-Source: [`vendor-to-soc-lifecycle.mmd`](./vendor-to-soc-lifecycle.mmd)
+### 2. Signal-to-Noise Filtering Pipeline
+![Signal-to-Noise Pipeline](./signal-vs-noise-funnel.png)
+
+### 3. Agent-Assisted Vendor-to-SOC Lifecycle
+![Vendor-to-SOC Lifecycle](./vendor-to-soc-lifecycle.png)
+
+---
+
+## Cloud-Specific & Cross-Cloud Diagrams (Official Cloud Icons)
+
+### 4. Azure & Microsoft Sentinel ([Guide](../docs/08-azure-logging-guide.md))
+![Azure & Microsoft Sentinel Architecture](./cloud-azure-sentinel.png)
+
+### 5. AWS & Amazon Security Lake ([Guide](../docs/09-aws-logging-guide.md))
+![AWS & Amazon Security Lake Architecture](./cloud-aws-security-lake.png)
+
+### 6. GCP & Google Security Operations / Chronicle ([Guide](../docs/10-gcp-logging-guide.md))
+![GCP & Google Security Operations Architecture](./cloud-gcp-secops.png)
+
+### 7. Cross-Cloud & Hybrid Log Federation ([Guide](../docs/11-cross-cloud-log-federation.md))
+![Cross-Cloud & Hybrid Log Federation](./cross-cloud-log-federation.png)

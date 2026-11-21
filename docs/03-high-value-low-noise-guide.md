@@ -18,7 +18,7 @@ Always separate logs into **two explicit streams** at the application boundary:
    - Health checks, latency metrics, SQL debug traces, stack traces, background job heartbeats, feature flag checks.
    - Sampled, rotated, and kept on cheaper operational storage (7–30 days), **never routed to SIEM analytics tables**.
 
-See the visual diagram in [`diagrams/architecture-two-stream.svg`](../diagrams/architecture-two-stream.svg).
+See the visual diagram in [`diagrams/architecture-two-stream.png`](../diagrams/architecture-two-stream.png).
 
 ---
 

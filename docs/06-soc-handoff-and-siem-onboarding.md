@@ -8,12 +8,12 @@ Good logging code is only half the job. A Government SOC cannot monitor what it 
 
 Pick the cleanest transport already supported by the agency's platform—avoid bespoke polling scripts unless the application is legacy and cannot push logs:
 
-| Hosting Pattern | Recommended Transport | Notes |
+| Hosting Pattern | Recommended Transport | Deep-Dive Guide |
 |---|---|---|
-| **Containers / Kubernetes / App Service** | Single-line JSON to `stdout` -> Fluent Bit / OpenTelemetry Collector -> SIEM | Filter on `stream == "security"` in the collector so operational logs route to APM/data lake while security logs route to SIEM. |
-| **Azure / Microsoft Sentinel** | Azure Monitor Agent (AMA) / Logs Ingestion API + Data Collection Rule (DCR) -> Custom `_CL` table or ASIM parser | For legacy or custom apps that cannot integrate cleanly with Sentinel natively, see [`jusso-dev/Bower`](https://github.com/jusso-dev/Bower). |
-| **AWS** | CloudWatch Logs / Kinesis Data Firehose (filtered on `{ $.stream = "security" }`) -> SIEM | Avoid shipping unfiltered `/aws/lambda` or ALB debug noise directly to SIEM. |
-| **On-Prem / VM** | Local append-only JSON file or Unix socket -> Vector / Fluent Bit / Splunk Universal Forwarder / AMA over mTLS | Restrict file permissions (`0640`), rotate safely, never grant the app account delete permissions on remote SIEM sinks. |
+| **Azure (App Service / AKS / Container Apps / Functions)** | Managed Identity -> Azure Monitor Logs Ingestion API (DCE + DCR KQL filter on `stream == "security"`) -> Microsoft Sentinel (`CustomAppSecurity_CL`). For legacy apps, see [`jusso-dev/Bower`](https://github.com/jusso-dev/Bower). | [`08-azure-logging-guide.md`](./08-azure-logging-guide.md) |
+| **AWS (ECS / EKS / Lambda / EC2)** | FireLens/Fluent Bit or CloudWatch Subscription Filter (`{ $.stream = "security" }`) -> Amazon Data Firehose -> Isolated Security Account S3 (Object Lock) / Security Lake (OCSF) / SIEM. | [`09-aws-logging-guide.md`](./09-aws-logging-guide.md) |
+| **GCP (Cloud Run / GKE / Compute Engine)** | Structured JSON stdout -> Cloud Logging Router Sink (`jsonPayload.stream="security"`) -> Pub/Sub + Locked Log Bucket -> Google SecOps (Chronicle). | [`10-gcp-logging-guide.md`](./10-gcp-logging-guide.md) |
+| **Cross-Cloud & On-Prem / Hybrid** | Filter `stream == "security"` at source -> zero-static-key OIDC/WIF bridge (S3+SQS CCF, Pub/Sub CCF, Event Hubs -> Firehose, or ExpressRoute/Direct Connect/Interconnect + disk-buffered OTel/Fluent Bit). | [`11-cross-cloud-log-federation.md`](./11-cross-cloud-log-federation.md) |
 
 ---
 

@@ -6,11 +6,11 @@
 
 **High-value, low-noise, security-centric logging for custom software vendors building for Government and Enterprise SOC teams.**
 
-Aligned to **OWASP** (Logging Cheat Sheet, Application Logging Vocabulary, ASVS v4.0.3 V7 & v5.0 V16, Top 10 A09) and **ACSC / ASD** (Information Security Manual System Monitoring, *Best Practices for Event Logging and Threat Detection*, and *Priority Logs for SIEM Ingestion*)—complete with **zero-dependency CLI scripts**, **architecture diagrams**, **drop-in language wrappers**, **starter SIEM detections**, and **portable AI coding agent skills** so vendor teams can ship SOC-ready telemetry with minimal effort.
+Aligned to **OWASP** (Logging Cheat Sheet, Application Logging Vocabulary, ASVS v4.0.3 V7 & v5.0 V16, Top 10 A09) and **ACSC / ASD** (Information Security Manual System Monitoring, *Best Practices for Event Logging and Threat Detection*, and *Priority Logs for SIEM Ingestion*)—complete with **Azure, AWS, GCP & Cross-Cloud federation guides**, **Diagram-as-Code architecture diagrams with official cloud icons**, **zero-dependency CLI scripts**, **drop-in language wrappers**, **starter SIEM detections**, and **portable AI coding agent skills**.
 
 ---
 
-![Two-Stream SOC-Ready Logging Architecture](./diagrams/architecture-two-stream.svg)
+![Two-Stream SOC-Ready Logging Architecture](./diagrams/architecture-two-stream.png)
 
 ---
 
@@ -69,9 +69,24 @@ python3 scripts/generate_soc_handoff.py --app-id gov-grants-portal --app-name "G
 
 ---
 
+## Cloud & Cross-Cloud Reference Architectures (Azure, AWS, GCP & Hybrid)
+
+Vendor hosting and agency SOC SIEMs frequently span different clouds. Dedicated guides and official-icon diagrams cover each cloud and every inter-cloud path using **zero static secrets** (OIDC / Workload Identity Federation / Managed Identity) and **filtering before egress**:
+
+| Cloud / Scenario | Implementation Guide | Architecture Diagram |
+|---|---|---|
+| **Microsoft Azure & Sentinel** | [08 — Azure & Sentinel Guide](./docs/08-azure-logging-guide.md) | [`cloud-azure-sentinel.png`](./diagrams/cloud-azure-sentinel.png) |
+| **Amazon Web Services (AWS)** | [09 — AWS & Security Lake Guide](./docs/09-aws-logging-guide.md) | [`cloud-aws-security-lake.png`](./diagrams/cloud-aws-security-lake.png) |
+| **Google Cloud Platform (GCP)** | [10 — GCP & Google SecOps Guide](./docs/10-gcp-logging-guide.md) | [`cloud-gcp-secops.png`](./diagrams/cloud-gcp-secops.png) |
+| **Cross-Cloud & Hybrid Federation** | [11 — Cross-Cloud Log Federation](./docs/11-cross-cloud-log-federation.md) | [`cross-cloud-log-federation.png`](./diagrams/cross-cloud-log-federation.png) |
+
+![Cross-Cloud & Hybrid Log Federation](./diagrams/cross-cloud-log-federation.png)
+
+---
+
 ## Signal-to-Noise Discipline
 
-![Signal-to-Noise Filtering Funnel](./diagrams/signal-vs-noise-funnel.svg)
+![Signal-to-Noise Filtering Pipeline](./diagrams/signal-vs-noise-funnel.png)
 
 ---
 
@@ -79,20 +94,20 @@ python3 scripts/generate_soc_handoff.py --app-id gov-grants-portal --app-name "G
 
 | Directory | What's Inside |
 |---|---|
-| [`docs/`](./docs/) | 7 vendor & government SOC guides: [Why SOC Logs Fail](./docs/01-why-soc-logs-fail.md), [Taxonomy & Schema](./docs/02-event-taxonomy-and-schema.md), [High-Value / Low-Noise Guide](./docs/03-high-value-low-noise-guide.md), [OWASP & ACSC Mapping](./docs/04-owasp-and-acsc-mapping.md), [PII Redaction & Log Safety](./docs/05-pii-redaction-and-log-safety.md), [SOC Handoff Playbook](./docs/06-soc-handoff-and-siem-onboarding.md), and [Government RFP / Procurement Clauses](./docs/07-government-procurement-clauses.md). |
+| [`docs/`](./docs/) | 11 practical guides: [Why SOC Logs Fail](./docs/01-why-soc-logs-fail.md), [Taxonomy & Schema](./docs/02-event-taxonomy-and-schema.md), [High-Value / Low-Noise](./docs/03-high-value-low-noise-guide.md), [OWASP & ACSC Mapping](./docs/04-owasp-and-acsc-mapping.md), [PII Redaction & Safety](./docs/05-pii-redaction-and-log-safety.md), [SOC Handoff Playbook](./docs/06-soc-handoff-and-siem-onboarding.md), [Government RFP Clauses](./docs/07-government-procurement-clauses.md), [Azure](./docs/08-azure-logging-guide.md), [AWS](./docs/09-aws-logging-guide.md), [GCP](./docs/10-gcp-logging-guide.md), and [Cross-Cloud Federation](./docs/11-cross-cloud-log-federation.md). |
 | [`schemas/`](./schemas/) | Strict Draft 2020-12 [`security-event.schema.json`](./schemas/security-event.schema.json), 32-event machine-readable [`event-catalog.json`](./schemas/event-catalog.json) (mapped to MITRE ATT&CK, OWASP ASVS, and ACSC ISM), plus golden & anti-pattern NDJSON fixtures. |
 | [`skills/`](./skills/) | 4 portable Agent Skills (`soc-logging-audit`, `soc-logging-implement`, `soc-logging-verify`, `soc-handoff-pack`) with progressive-disclosure reference sheets. |
 | [`scripts/`](./scripts/) | Zero-dependency Python 3 validation, signal-to-noise scoring, static repo auditing, synthetic attack generation, SOC handoff generation, and Bash skill installer. |
 | [`examples/`](./examples/) | Drop-in, zero-bloat `SecurityLogger` reference wrappers in **TypeScript**, **Python**, **C# / .NET**, and **Go**. |
 | [`detections/`](./detections/) | Day-1 starter SOC detection rules in **Sigma**, **Microsoft Sentinel KQL**, and **Splunk SPL**. |
-| [`diagrams/`](./diagrams/) | Editable Mermaid (`.mmd`) and standalone SVG (`.svg`) diagrams ready for SADs, SSPs, and SOC handoff packs. |
+| [`diagrams/`](./diagrams/) | Diagram-as-Code [`generate_diagrams.py`](./diagrams/generate_diagrams.py) (Python `diagrams`, consistent `Helvetica` font, official Azure/AWS/GCP icons) + all 7 rendered PNG diagrams. |
 | [`templates/`](./templates/) | Fill-in-the-blank [SOC Handoff Pack](./templates/soc-handoff-pack.md), [UAT/ATO Acceptance Checklist](./templates/logging-acceptance-checklist.md), and [Vendor AI Prompt Pack](./templates/vendor-agent-prompt-pack.md). |
 
 ---
 
 ## Agent-Assisted Vendor-to-SOC Lifecycle
 
-![Vendor-to-SOC Lifecycle](./diagrams/vendor-to-soc-lifecycle.svg)
+![Vendor-to-SOC Lifecycle](./diagrams/vendor-to-soc-lifecycle.png)
 
 ---
 

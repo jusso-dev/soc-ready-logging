@@ -25,7 +25,7 @@ Use this skill once security logging is implemented and verified, to deliver eve
        --from-repo . \
        --out docs/SOC-HANDOFF-PACK.md
      ```
-   - Enrich the generated document using [`references/handoff-structure.md`](./references/handoff-structure.md) with real transport details, estimated event volumes, service-account baselines, and vendor escalation contacts.
+   - Enrich the generated document using [`references/handoff-structure.md`](./references/handoff-structure.md) with real cloud transport details (Azure DCE/DCR, AWS Firehose/S3+SQS, GCP Logging Sink/Pub/Sub, or cross-cloud OIDC/WIF bridge per `docs/08`–`11`), estimated event volumes, service-account baselines, and vendor escalation contacts.
 
 3. **Generate golden sample NDJSON & tailored starter detections**
    - Export or save `docs/soc-golden-events.ndjson` containing at least one schema-valid example for every implemented event (validated with `validate_logs.py --strict`).

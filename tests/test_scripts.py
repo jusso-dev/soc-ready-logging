@@ -195,5 +195,35 @@ class TestAgentSkillsAndInstaller(unittest.TestCase):
                 self.assertTrue((installed / name / "SKILL.md").exists(), f"Skill {name} not installed")
 
 
+class TestDiagramsAndCloudDocs(unittest.TestCase):
+    def test_all_png_diagrams_exist_and_are_valid_png(self) -> None:
+        expected = [
+            "architecture-two-stream.png",
+            "signal-vs-noise-funnel.png",
+            "vendor-to-soc-lifecycle.png",
+            "cloud-azure-sentinel.png",
+            "cloud-aws-security-lake.png",
+            "cloud-gcp-secops.png",
+            "cross-cloud-log-federation.png",
+        ]
+        diagrams_dir = REPO_ROOT / "diagrams"
+        self.assertTrue((diagrams_dir / "generate_diagrams.py").exists())
+        for filename in expected:
+            path = diagrams_dir / filename
+            self.assertTrue(path.exists(), f"Missing generated diagram: {filename}")
+            header = path.read_bytes()[:8]
+            self.assertEqual(header, b"\x89PNG\r\n\x1a\n", f"Invalid PNG header in {filename}")
+
+    def test_cloud_and_cross_cloud_docs_exist(self) -> None:
+        docs_dir = REPO_ROOT / "docs"
+        for doc in (
+            "08-azure-logging-guide.md",
+            "09-aws-logging-guide.md",
+            "10-gcp-logging-guide.md",
+            "11-cross-cloud-log-federation.md",
+        ):
+            self.assertTrue((docs_dir / doc).exists(), f"Missing cloud guide: {doc}")
+
+
 if __name__ == "__main__":
     unittest.main()
