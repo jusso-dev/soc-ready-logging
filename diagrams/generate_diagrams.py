@@ -24,20 +24,20 @@ from diagrams.aws.storage import S3
 from diagrams.azure.analytics import EventHubs, LogAnalyticsWorkspaces
 from diagrams.azure.compute import AppServices, ContainerApps, FunctionApps
 from diagrams.azure.identity import EntraManagedIdentities
-from diagrams.azure.monitor import ApplicationInsights, Monitor
+from diagrams.azure.monitor import ApplicationInsights, Logs as AzLogs, Monitor
 from diagrams.azure.network import ExpressrouteCircuits, FrontDoors, PrivateEndpoint
 from diagrams.azure.security import AzureSentinel, Defender
+from diagrams.elastic.elasticsearch import Alerting, SecuritySettings
 from diagrams.gcp.analytics import BigQuery, PubSub
 from diagrams.gcp.compute import CloudRun, ComputeEngine, GKE
 from diagrams.gcp.network import Armor
 from diagrams.gcp.operations import Logging as GcpLogging, Monitoring as GcpMonitoring
 from diagrams.gcp.security import Iam as GcpIam, KMS as GcpKms, SecurityCommandCenter
-from diagrams.generic.blank import Blank
+from diagrams.generic.network import Firewall
 from diagrams.onprem.ci import GithubActions
 from diagrams.onprem.client import Users
-from diagrams.onprem.compute import Server
-from diagrams.onprem.logging import FluentBit, Loki
-from diagrams.onprem.security import Vault
+from diagrams.onprem.logging import FluentBit
+from diagrams.onprem.monitoring import Grafana, Splunk
 from diagrams.onprem.vcs import Git
 
 OUT_DIR = Path(__file__).resolve().parent
@@ -112,28 +112,36 @@ def build_two_stream() -> None:
         users = Users("Agency Users &\nAPI Clients")
 
         with Cluster("1. Custom Vendor Application", graph_attr=cluster_style("#f8fafc", "#cbd5e1")):
-            app = Server("App Logic &\nAuth Middleware")
-            sec_log = Vault("SecurityLogger Wrapper\nstream='security' | Redact\nCWE-117 Safe | UTC Z")
-            ops_log = Server("Operational Logger\nDEBUG | /healthz | Perf")
+            app = AppServices("App Business Logic\n& Auth Middleware")
+            sec_log = SecuritySettings("SecurityLogger Wrapper\nstream='security' | Redact\nCWE-117 Safe | UTC Z")
+            ops_log = AzLogs("Operational Logger\nDEBUG | /healthz | Perf")
 
         with Cluster("2. Collector & Stream Router", graph_attr=cluster_style("#eff6ff", "#93c5fd", "#1e3a8a")):
             router = FluentBit("Fluent Bit / OTel\nFilter on stream field\nWrite-Only Sink Creds")
 
         with Cluster("3A. Government SOC SIEM (ISM-1405 / ISM-1988)", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
-            sentinel = AzureSentinel("Microsoft Sentinel /\nSplunk / SecOps\n12+ Mo Searchable")
+            siems = [
+                AzureSentinel("Microsoft Sentinel\n(Azure)"),
+                SecurityLake("AWS Security Lake\n& Splunk"),
+                SecurityCommandCenter("Google SecOps\n(Chronicle)"),
+            ]
             soc = Users("SOC Analysts &\nSOAR Detections")
 
         with Cluster("3B. Operational Telemetry (Never Sent to SIEM)", graph_attr=cluster_style("#f1f5f9", "#94a3b8", "#334155")):
-            apm = Loki("APM / Loki / Data Lake\n7–30 Days | Linked via\ncorrelation_id")
+            apm = Grafana("APM / Grafana / Data Lake\n7–30 Days | Linked via\ncorrelation_id")
 
         users >> Edge(label="Trusted Proxy IP\n+ correlation_id", color="#334155") >> app
         app >> sec_edge("P1/P2 transitions") >> sec_log
         app >> ops_edge("Debug / health") >> ops_log
         sec_log >> sec_edge() >> router
         ops_log >> ops_edge() >> router
-        router >> sec_edge("stream == 'security'\n(Never sampled)") >> sentinel
+        router >> sec_edge("stream == 'security'\n(Never sampled)") >> siems[0]
+        router >> sec_edge() >> siems[1]
+        router >> sec_edge() >> siems[2]
         router >> ops_edge("stream != 'security'\n(Sampled / rotated)") >> apm
-        sentinel >> sec_edge("Sigma / KQL / SPL\n+ Heartbeat Alert") >> soc
+        siems[0] >> sec_edge("Sigma / KQL / SPL\n+ Heartbeat Alert") >> soc
+        siems[1] >> sec_edge() >> soc
+        siems[2] >> sec_edge() >> soc
 
 
 def build_signal_vs_noise() -> None:
@@ -147,14 +155,14 @@ def build_signal_vs_noise() -> None:
         node_attr=BASE_NODE_ATTR,
         edge_attr=BASE_EDGE_ATTR,
     ):
-        raw = Server("100% Raw App Activity\nHTTP, SQL, Auth, Admin,\nHealth Probes, Assets")
+        raw = AppServices("100% Raw App Activity\nHTTP, SQL, Auth, Admin,\nHealth Probes, Assets")
 
         with Cluster("Diverted to APM / Ops (~90–95% Volume)", graph_attr=cluster_style("#fef2f2", "#fca5a5", "#991b1b")):
-            dropped = Loki("Never Send to SIEM\n/healthz, .js/.css, DEBUG,\nPer-Request Valid JWTs")
+            dropped = Grafana("Never Send to SIEM\n/healthz, .js/.css, DEBUG,\nPer-Request Valid JWTs")
 
         with Cluster("Security Stream Pipeline (stream='security')", graph_attr=cluster_style("#eff6ff", "#93c5fd", "#1e3a8a")):
             candidates = FluentBit("5–10% Security Transitions\nAuthn, MFA, Authz 403,\nPrivs, Exports, Config")
-            hygiene = Vault("Hygiene & Flood Gate\nRedact Secrets/PII\nStrip CWE-117 | Dedupe")
+            hygiene = SecuritySettings("Hygiene & Flood Gate\nRedact Secrets/PII\nStrip CWE-117 | Dedupe")
 
         with Cluster("High-Value SOC Signal (1–3% Volume)", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
             siem = AzureSentinel("SIEM-Ready NDJSON\nScore >= 90/100\nP95 < 2 KB | 0 Leaks")
@@ -178,15 +186,15 @@ def build_vendor_lifecycle() -> None:
     ):
         with Cluster("Vendor Engineering + AI Agent", graph_attr=cluster_style("#eff6ff", "#93c5fd", "#1e3a8a")):
             step1 = Git("1. Install Skills\ninstall-skills.sh\n(4 SKILL.md packs)")
-            step2 = Server("2. Audit Repo\nsoc-logging-audit\naudit_repo_logging.py")
-            step3 = Vault("3. Implement\nsoc-logging-implement\nTS / Py / C# / Go")
+            step2 = AzLogs("2. Audit Repo\nsoc-logging-audit\naudit_repo_logging.py")
+            step3 = SecuritySettings("3. Implement\nsoc-logging-implement\nTS / Py / C# / Go")
 
         with Cluster("Automated CI Quality Gate", graph_attr=cluster_style("#fefce8", "#fcd34d", "#854d0e")):
             step4 = GithubActions("4. Verify in CI\nvalidate_logs.py --strict\nscore >= 90/100")
 
         with Cluster("Government SOC Onboarding", graph_attr=cluster_style("#ecfdf5", "#34d399", "#065f46")):
             step5 = FluentBit("5. SOC Handoff Pack\ngenerate_soc_handoff.py\nCatalog + KQL/Sigma")
-            step6 = AzureSentinel("6. UAT Purple Test\ngenerate_test_events.py\nAlerts + Heartbeat OK")
+            step6 = Alerting("6. UAT Purple Test\ngenerate_test_events.py\nAlerts + Heartbeat OK")
 
         step1 >> fed_edge() >> step2 >> fed_edge() >> step3 >> fed_edge() >> step4 >> sec_edge() >> step5 >> sec_edge() >> step6
 
